@@ -8,6 +8,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	try {
 		const user_id = url.searchParams.get('user_id');
 		const puzzle_id = url.searchParams.get('puzzle_id');
+		const puzzle_number = url.searchParams.get('puzzle_number');
 		const date = url.searchParams.get('date');
 		const timezone = url.searchParams.get('timezone');
 
@@ -23,7 +24,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			.from('puzzles')
 			.select('id, puzzle_number, daily_date, prompt, items');
 
-		// Support archive mode: fetch by puzzle_id or date
+		// Support archive mode: fetch by puzzle_id, puzzle_number, or date
 		if (puzzle_id) {
 			if (!isValidUUID(puzzle_id)) {
 				return json(
@@ -32,6 +33,16 @@ export const GET: RequestHandler = async ({ url }) => {
 				);
 			}
 			puzzleQuery = puzzleQuery.eq('id', puzzle_id);
+		} else if (puzzle_number) {
+			// Fetch puzzle by puzzle number
+			const puzzleNum = parseInt(puzzle_number);
+			if (isNaN(puzzleNum)) {
+				return json(
+					{ success: false, error: 'Invalid puzzle_number format' } as APIResponse<never>,
+					{ status: 400 }
+				);
+			}
+			puzzleQuery = puzzleQuery.eq('puzzle_number', puzzleNum);
 		} else if (date) {
 			// Fetch puzzle for specific date
 			puzzleQuery = puzzleQuery.eq('daily_date', date);
