@@ -2,6 +2,7 @@
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
+	import { Icon, Moon, Sun } from 'svelte-hero-icons';
 
 	let { children } = $props();
 	let darkMode = $state(false);
@@ -45,9 +46,9 @@
 	aria-label="Toggle dark mode"
 >
 	{#if darkMode}
-		<span class="text-xl">☀️</span>
+		<Icon src={Sun} size="20" class="text-yellow-500" />
 	{:else}
-		<span class="text-xl">🌙</span>
+		<Icon src={Moon} size="20" class="text-gray-700" />
 	{/if}
 </button>
 
