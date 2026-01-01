@@ -2,6 +2,7 @@
 	import type { Puzzle, Results } from '$lib/types';
 	import { shareResults, calculateTimeUntilNextPuzzle, formatDate } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import { Icon, Check, XMark, Star, BookOpen, Share } from 'svelte-hero-icons';
 
 	interface Props {
 		puzzle: Puzzle;
@@ -67,9 +68,19 @@
 		<div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 shadow-xl animate-fadeIn">
 			<div class="text-center">
 				<h2 class="text-5xl font-bold mb-2">{results.submission.total_score}/8</h2>
-				<p class="text-xl opacity-90">
+				<p class="text-xl opacity-90 flex items-center justify-center gap-2">
 					Base: {results.submission.base_score}/5 • Captain:
-					{captainCorrect ? '✅ +3' : '❌ +0'}
+					{#if captainCorrect}
+						<span class="flex items-center gap-1">
+							<Icon src={Check} mini size="20" class="inline" />
+							+3
+						</span>
+					{:else}
+						<span class="flex items-center gap-1">
+							<Icon src={XMark} mini size="20" class="inline" />
+							+0
+						</span>
+					{/if}
 				</p>
 			</div>
 		</div>
@@ -98,17 +109,20 @@
 					</div>
 					<div class="flex gap-2">
 						{#if isDrafted}
-							<span class="px-3 py-1 bg-green-600 text-white text-sm rounded-full font-medium">
-								🟩 Drafted
+							<span class="px-3 py-1 bg-green-600 text-white text-sm rounded-full font-medium flex items-center gap-1">
+								<Icon src={Check} mini size="14" class="inline" />
+								Drafted
 							</span>
 						{:else}
-							<span class="px-3 py-1 bg-gray-400 text-white text-sm rounded-full font-medium">
-								⬛ Missed
+							<span class="px-3 py-1 bg-gray-400 text-white text-sm rounded-full font-medium flex items-center gap-1">
+								<Icon src={XMark} mini size="14" class="inline" />
+								Missed
 							</span>
 						{/if}
 						{#if isCaptain}
-							<span class="px-3 py-1 bg-yellow-500 text-black text-sm rounded-full font-bold">
-								⭐ Captain
+							<span class="px-3 py-1 bg-yellow-500 text-black text-sm rounded-full font-bold flex items-center gap-1">
+								<Icon src={Star} mini size="14" class="inline" />
+								Captain
 							</span>
 						{/if}
 					</div>
@@ -128,10 +142,13 @@
 						{#each incorrectDrafts as item}
 							{@const isCaptain = results.submission.captain === item}
 							<span
-								class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-full text-sm font-medium border border-red-300 dark:border-red-700"
+								class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-full text-sm font-medium border border-red-300 dark:border-red-700 flex items-center gap-1"
 							>
-								🟥 {item}
-								{#if isCaptain}⭐{/if}
+								<Icon src={XMark} mini size="14" class="inline" />
+								{item}
+								{#if isCaptain}
+									<Icon src={Star} mini size="14" class="inline" />
+								{/if}
 								(#{results.puzzle.true_rankings[item]})
 							</span>
 						{/each}
@@ -189,8 +206,9 @@
 
 			<!-- Sources -->
 			<div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-				<h4 class="text-sm font-semibold text-amber-900 dark:text-amber-100 mb-2">
-					📚 Data Sources:
+				<h4 class="text-sm font-semibold text-amber-900 dark:text-amber-100 mb-2 flex items-center gap-2">
+					<Icon src={BookOpen} mini size="16" class="inline" />
+					Data Sources:
 				</h4>
 				<ul class="space-y-1">
 					{#each results.sources as source}
@@ -210,9 +228,10 @@
 			<!-- Share Button -->
 			<button
 				onclick={handleShare}
-				class="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-lg transition-colors shadow-lg hover:shadow-xl"
+				class="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-lg transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
 			>
-				📤 Share Your Results
+				<Icon src={Share} mini size="20" class="inline" />
+				Share Your Results
 			</button>
 
 			<!-- Next Puzzle Countdown -->
