@@ -116,10 +116,10 @@
 			{/each}
 
 			<!-- Show incorrect drafts -->
-			{@const incorrectDrafts = results.submission.drafted_items.filter(
-				(item) => !trueTop5.map(([i]) => i).includes(item)
-			)}
-			{#if incorrectDrafts.length > 0}
+			{#if results.submission.drafted_items.filter((item) => !trueTop5.map(([i]) => i).includes(item)).length > 0}
+				{@const incorrectDrafts = results.submission.drafted_items.filter(
+					(item) => !trueTop5.map(([i]) => i).includes(item)
+				)}
 				<div class="mt-4">
 					<p class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
 						Your incorrect picks:
