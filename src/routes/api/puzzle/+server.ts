@@ -21,9 +21,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		let puzzleQuery = supabaseAdmin
 			.from('puzzles')
-			.select('id, puzzle_number, daily_date, prompt, items, published_at')
-			.not('published_at', 'is', null)
-			.lte('published_at', new Date().toISOString());
+			.select('id, puzzle_number, daily_date, prompt, items');
 
 		// Support archive mode: fetch by puzzle_id or date
 		if (puzzle_id) {

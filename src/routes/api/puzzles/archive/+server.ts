@@ -16,12 +16,10 @@ export const GET: RequestHandler = async ({ url }) => {
 			);
 		}
 
-		// Fetch all published puzzles ordered by date (newest first)
+		// Fetch all puzzles ordered by date (newest first)
 		const { data: puzzlesData, error: puzzlesError } = await supabaseAdmin
 			.from('puzzles')
-			.select('id, puzzle_number, daily_date, prompt, published_at')
-			.not('published_at', 'is', null)
-			.lte('published_at', new Date().toISOString())
+			.select('id, puzzle_number, daily_date, prompt')
 			.order('daily_date', { ascending: false });
 
 		if (puzzlesError) {

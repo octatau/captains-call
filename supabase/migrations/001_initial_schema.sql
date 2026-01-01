@@ -12,7 +12,6 @@ CREATE TABLE puzzles (
     true_rankings JSONB NOT NULL,                   -- {"Apple": 2, "Google": 1, ...}
     sources JSONB NOT NULL,                         -- Array of source citations: ["https://...", "Data as of..."]
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    published_at TIMESTAMP WITH TIME ZONE,          -- When puzzle goes live (00:00 UTC on daily_date)
 
     CONSTRAINT valid_items CHECK (jsonb_array_length(items) = 10),
     CONSTRAINT valid_rankings CHECK (jsonb_typeof(true_rankings) = 'object'),
@@ -20,7 +19,6 @@ CREATE TABLE puzzles (
 );
 
 CREATE INDEX idx_puzzles_daily_date ON puzzles(daily_date DESC);
-CREATE INDEX idx_puzzles_published ON puzzles(published_at) WHERE published_at IS NOT NULL;
 
 -- Table: submissions
 -- User draft submissions (one per user per puzzle)
@@ -53,9 +51,9 @@ CREATE INDEX idx_submissions_created ON submissions(submitted_at DESC);
 ALTER TABLE puzzles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
 
--- Puzzles: Read-only for published puzzles (via service role in API routes)
-CREATE POLICY "Service role can read published puzzles" ON puzzles
-    FOR SELECT USING (published_at IS NOT NULL AND published_at <= NOW());
+-- Puzzles: Read-only via service role in API routes
+CREATE POLICY "Service role can read puzzles" ON puzzles
+    FOR SELECT USING (true);
 
 -- Submissions: Only insertable via API routes (using service role key)
 CREATE POLICY "Service role can insert submissions" ON submissions

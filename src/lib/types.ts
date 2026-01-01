@@ -66,7 +66,6 @@ export interface DBPuzzle {
 	items: string[]; // JSONB array from database
 	true_rankings: Record<string, number>; // JSONB object from database
 	sources: string[]; // JSONB array from database
-	published_at: string;
 }
 
 export interface DBSubmission {

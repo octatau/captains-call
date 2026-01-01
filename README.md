@@ -79,15 +79,14 @@ Visit [http://localhost:5173](http://localhost:5173)
 Add new daily puzzles via Supabase SQL Editor:
 
 ```sql
-INSERT INTO puzzles (puzzle_number, daily_date, prompt, items, true_rankings, sources, published_at)
+INSERT INTO puzzles (puzzle_number, daily_date, prompt, items, true_rankings, sources)
 VALUES (
     8,
     '2026-01-08',
     'Top 10 Programming Languages by GitHub Stars (2024)',
     '["JavaScript", "Python", "Java", ...]'::jsonb,
     '{"JavaScript": 1, "Python": 2, ...}'::jsonb,
-    '["https://github.com/search", "Data as of Jan 2024"]'::jsonb,
-    '2026-01-08 00:00:00+00'::timestamptz
+    '["https://github.com/search", "Data as of Jan 2024"]'::jsonb
 );
 ```
 
