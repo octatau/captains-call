@@ -4,7 +4,6 @@
 	import { getOrCreateUserId, getTimezoneOffset } from '$lib/utils';
 	import DraftInterface from '$lib/components/DraftInterface.svelte';
 	import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
-	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
 
 	let loading = $state(true);
 	let error = $state<string | null>(null);
@@ -101,9 +100,8 @@
 
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
 	<div class="container mx-auto px-4 py-8 max-w-4xl">
-		<!-- Header with archive link and dark mode toggle -->
-		<div class="flex justify-between items-center mb-6">
-			<DarkModeToggle />
+		<!-- Header with archive link -->
+		<div class="flex justify-end mb-6">
 			<a
 				href="/archive"
 				class="text-pearl-aqua-600 hover:text-pearl-aqua-700 dark:text-pearl-aqua-400 dark:hover:text-pearl-aqua-300 text-sm font-medium"
@@ -119,7 +117,7 @@
 			</div>
 		{:else if error}
 			<div
-				class="bg-red-100 dark:bg-red-900 border border-red-400 text-red-700 dark:text-red-100 px-4 py-3 rounded"
+				class="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-100 px-4 py-3 rounded"
 			>
 				<p class="font-bold">Error</p>
 				<p>{error}</p>
