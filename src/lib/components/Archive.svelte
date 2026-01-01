@@ -2,6 +2,7 @@
 	import type { ArchivePuzzle } from '$lib/types';
 	import { formatDate, isToday } from '$lib/utils';
 	import { createEventDispatcher } from 'svelte';
+	import { Icon, Check, ArrowRight } from 'svelte-hero-icons';
 
 	interface Props {
 		puzzles: ArchivePuzzle[];
@@ -68,8 +69,9 @@
 									</span>
 								{/if}
 								{#if puzzle.has_submitted}
-									<span class="px-2 py-0.5 bg-pearl-aqua-600 text-white text-xs rounded-full font-medium">
-										✓ Completed
+									<span class="px-2 py-0.5 bg-pearl-aqua-600 text-white text-xs rounded-full font-medium flex items-center gap-1">
+										<Icon src={Check} mini size="14" class="inline" />
+										Completed
 									</span>
 								{/if}
 							</div>
@@ -93,8 +95,9 @@
 									<div class="text-xs text-gray-500 dark:text-gray-400">View Results</div>
 								</div>
 							{:else}
-								<div class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm">
-									Play →
+								<div class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm flex items-center gap-1">
+									Play
+									<Icon src={ArrowRight} mini size="16" class="inline" />
 								</div>
 							{/if}
 						</div>

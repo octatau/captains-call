@@ -4,6 +4,7 @@
 	import { getOrCreateUserId, formatDate } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { theme } from '$lib/theme';
+	import { Icon, Check, ArrowLeft } from 'svelte-hero-icons';
 
 	let loading = $state(true);
 	let error = $state<string | null>(null);
@@ -56,9 +57,10 @@
 		<div class="mb-6">
 			<a
 				href="/"
-				class="{theme.primary.text} hover:text-pearl-aqua-700 dark:hover:text-pearl-aqua-300 text-sm font-medium"
+				class="{theme.primary.text} hover:text-pearl-aqua-700 dark:hover:text-pearl-aqua-300 text-sm font-medium flex items-center gap-1 w-fit"
 			>
-				← Back to Today's Puzzle
+				<Icon src={ArrowLeft} mini size="16" class="inline" />
+				Back to Today's Puzzle
 			</a>
 		</div>
 
@@ -115,8 +117,9 @@
 										</span>
 										{#if puzzle.has_submitted}
 											<span
-												class="px-2 py-0.5 {theme.success.bg} text-white text-xs rounded-full font-medium"
+												class="px-2 py-0.5 {theme.success.bg} text-white text-xs rounded-full font-medium flex items-center gap-1"
 											>
+												<Icon src={Check} mini size="14" class="inline" />
 												Completed
 											</span>
 										{/if}

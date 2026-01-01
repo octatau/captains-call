@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Puzzle } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
+	import { Icon, Star } from 'svelte-hero-icons';
 
 	interface Props {
 		puzzle: Puzzle;
@@ -76,8 +77,9 @@
 								<span class="text-pearl-aqua-600 dark:text-pearl-aqua-400 text-sm font-semibold">Drafted</span>
 							{/if}
 							{#if isCaptain}
-								<span class="px-2 py-0.5 text-xs font-bold bg-jasmine-500 text-gray-900 rounded">
-									⭐ CAPTAIN
+								<span class="px-2 py-0.5 text-xs font-bold bg-jasmine-500 text-gray-900 rounded flex items-center gap-1">
+									<Icon src={Star} mini size="14" class="inline" />
+									CAPTAIN
 								</span>
 							{/if}
 						</div>
