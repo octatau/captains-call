@@ -163,7 +163,8 @@ export function generateShareText(
  * Format date to display format (e.g., "Jan 1, 2024")
  */
 export function formatDate(dateString: string): string {
-	const date = new Date(dateString);
+	// Append T00:00:00 to force local timezone interpretation
+	const date = new Date(dateString + 'T00:00:00');
 	return date.toLocaleDateString('en-US', {
 		month: 'short',
 		day: 'numeric',
@@ -175,7 +176,8 @@ export function formatDate(dateString: string): string {
  * Check if a date is today (in user's local timezone)
  */
 export function isToday(dateString: string): boolean {
-	const date = new Date(dateString);
+	// Append T00:00:00 to force local timezone interpretation
+	const date = new Date(dateString + 'T00:00:00');
 	const today = new Date();
 
 	return (
