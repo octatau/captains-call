@@ -1,5 +1,6 @@
 -- Captain's Call Database Schema
 -- Initial migration: puzzles and submissions tables with sources support
+-- Schema: public (default Supabase schema)
 
 -- Table: puzzles
 -- Daily puzzle definitions with verifiable data sources
