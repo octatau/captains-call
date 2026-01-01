@@ -24,10 +24,10 @@ export const theme = {
 
 	// Success states (correct picks, drafted items)
 	success: {
-		text: 'text-green-600 dark:text-green-400',
-		bg: 'bg-green-600',
-		bgLight: 'bg-green-50 dark:bg-green-900/20',
-		border: 'border-green-500'
+		text: 'text-pearl-aqua-600 dark:text-pearl-aqua-400',
+		bg: 'bg-pearl-aqua-600',
+		bgLight: 'bg-pearl-aqua-50 dark:bg-pearl-aqua-900/20',
+		border: 'border-pearl-aqua-500'
 	},
 
 	// Error states (incorrect picks, missed items)

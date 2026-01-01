@@ -66,7 +66,7 @@
 
 	<!-- Layer 1: Score Summary -->
 	{#if revealLayer >= 1}
-		<div class="bg-gradient-to-r from-pearl-aqua-500 to-space-indigo-500 text-white rounded-lg p-6 shadow-xl animate-fadeIn">
+		<div class="bg-pearl-aqua-600 dark:bg-pearl-aqua-500 text-white rounded-lg p-6 shadow-xl animate-fadeIn">
 			<div class="text-center">
 				<h2 class="text-5xl font-bold mb-2">{results.submission.total_score}/8</h2>
 				<p class="text-xl opacity-90 flex items-center justify-center gap-2">

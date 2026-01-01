@@ -52,7 +52,7 @@
 					onclick={() => handlePuzzleClick(puzzle)}
 					class="w-full text-left p-4 rounded-lg border-2 transition-all hover:scale-[1.02] hover:shadow-lg
 						{puzzle.has_submitted
-							? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+							? 'border-pearl-aqua-500 bg-pearl-aqua-50 dark:bg-pearl-aqua-900/20'
 							: 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-blue-400'}"
 				>
 					<div class="flex items-start justify-between gap-4">
@@ -68,7 +68,7 @@
 									</span>
 								{/if}
 								{#if puzzle.has_submitted}
-									<span class="px-2 py-0.5 bg-green-600 text-white text-xs rounded-full font-medium">
+									<span class="px-2 py-0.5 bg-pearl-aqua-600 text-white text-xs rounded-full font-medium">
 										✓ Completed
 									</span>
 								{/if}
@@ -87,7 +87,7 @@
 						<div class="flex-shrink-0 text-right">
 							{#if puzzle.has_submitted && puzzle.total_score !== undefined}
 								<div class="text-center">
-									<div class="text-2xl font-bold text-green-600 dark:text-green-400">
+									<div class="text-2xl font-bold text-pearl-aqua-600 dark:text-pearl-aqua-400">
 										{puzzle.total_score}/8
 									</div>
 									<div class="text-xs text-gray-500 dark:text-gray-400">View Results</div>
