@@ -4,7 +4,7 @@
 	import { getOrCreateUserId, formatDate } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { theme } from '$lib/theme';
-	import { Icon, Check, ArrowLeft } from 'svelte-hero-icons';
+	import { Icon, Check } from 'svelte-hero-icons';
 
 	let loading = $state(true);
 	let error = $state<string | null>(null);
@@ -53,17 +53,6 @@
 
 <div class="min-h-screen {theme.page.bg} transition-colors">
 	<div class="container mx-auto px-4 py-8 max-w-4xl">
-		<!-- Header with back link -->
-		<div class="mb-6">
-			<a
-				href="/"
-				class="{theme.primary.text} hover:text-pearl-aqua-700 dark:hover:text-pearl-aqua-300 text-sm font-medium flex items-center gap-1 w-fit"
-			>
-				<Icon src={ArrowLeft} mini size="16" class="inline" />
-				Back to Today's Puzzle
-			</a>
-		</div>
-
 		<div class="space-y-6">
 			<!-- Header -->
 			<div class="text-center">

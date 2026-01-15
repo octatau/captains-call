@@ -100,16 +100,6 @@
 
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
 	<div class="container mx-auto px-4 py-8 max-w-4xl">
-		<!-- Header with archive link -->
-		<div class="flex justify-end mb-6">
-			<a
-				href="/archive"
-				class="text-pearl-aqua-600 hover:text-pearl-aqua-700 dark:text-pearl-aqua-400 dark:hover:text-pearl-aqua-300 text-sm font-medium"
-			>
-				View Archive
-			</a>
-		</div>
-
 		<!-- Content Area -->
 		{#if loading && !puzzle}
 			<div class="flex justify-center items-center min-h-[400px]">

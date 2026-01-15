@@ -7,7 +7,6 @@
 	import DraftInterface from '$lib/components/DraftInterface.svelte';
 	import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
 	import { theme } from '$lib/theme';
-	import { Icon, ArrowLeft } from 'svelte-hero-icons';
 
 	let loading = $state(true);
 	let error = $state<string | null>(null);
@@ -114,23 +113,6 @@
 
 <div class="min-h-screen {theme.page.bg} transition-colors">
 	<div class="container mx-auto px-4 py-8 max-w-4xl">
-		<!-- Header with navigation -->
-		<div class="flex justify-between items-center mb-6">
-			<a
-				href="/"
-				class="{theme.primary.text} hover:text-pearl-aqua-700 dark:hover:text-pearl-aqua-300 text-sm font-medium flex items-center gap-1"
-			>
-				<Icon src={ArrowLeft} mini size="16" class="inline" />
-				Today's Puzzle
-			</a>
-			<a
-				href="/archive"
-				class="{theme.primary.text} hover:text-pearl-aqua-700 dark:hover:text-pearl-aqua-300 text-sm font-medium"
-			>
-				View Archive
-			</a>
-		</div>
-
 		<!-- Content Area -->
 		{#if loading}
 			<div class="flex justify-center items-center min-h-[400px]">

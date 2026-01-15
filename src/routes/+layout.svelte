@@ -2,7 +2,7 @@
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
-	import { Icon, Moon, Sun } from 'svelte-hero-icons';
+	import Header from '$lib/components/Header.svelte';
 
 	let { children } = $props();
 	let darkMode = $state(false);
@@ -39,17 +39,6 @@
 	<title>Topick</title>
 </svelte:head>
 
-<!-- Theme Toggle Button (Fixed Position) -->
-<button
-	onclick={toggleDarkMode}
-	class="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-110 transition-transform"
-	aria-label="Toggle dark mode"
->
-	{#if darkMode}
-		<Icon src={Sun} size="20" class="text-yellow-500" />
-	{:else}
-		<Icon src={Moon} size="20" class="text-gray-700" />
-	{/if}
-</button>
+<Header {darkMode} onToggleDarkMode={toggleDarkMode} />
 
 {@render children()}
