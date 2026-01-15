@@ -1,8 +1,8 @@
-# Captain's Call
+# Topick
 
-> Draft the best 5 out of 10 — choose a Captain — and see how everyone else picked.
+> Guess the Rankings
 
-A daily draft game where you pick 5 items from 10 based on verifiable data, choose a Captain, and compete for the perfect 8/8 score.
+A daily ranking game where you guess which 5 items are in the top 5 based on real-world data, guess which one is #1, and compete for the perfect 8/8 score.
 
 ## Features
 
@@ -30,7 +30,7 @@ A daily draft game where you pick 5 items from 10 based on verifiable data, choo
 
 ```bash
 git clone <your-repo-url>
-cd captains-call
+cd topick
 npm install
 ```
 
@@ -67,11 +67,11 @@ Visit [http://localhost:5173](http://localhost:5173)
 
 ## How to Play
 
-1. **Draft**: Click to select 5 items from 10
-2. **Captain**: Click a drafted item again to make it your Captain ⭐
+1. **Which 5 are in the top 5?**: Click to select the 5 items you think are in the actual top 5
+2. **Which one is #1?**: Click one of your selected items to guess which one is ranked #1
 3. **Submit**: Get your score!
-   - **Base Score**: +1 for each drafted item in true top 5 (max 5 points)
-   - **Captain Bonus**: +3 if Captain is ranked #1 (else 0 points)
+   - **Top 5 Score**: +1 for each correct guess (max 5 points)
+   - **#1 Bonus**: +3 if you correctly guess the #1 ranked item (else 0 points)
    - **Total**: 0-8 points (8/8 = perfect game)
 
 ## Creating Puzzles

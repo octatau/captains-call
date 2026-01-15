@@ -58,7 +58,7 @@
 	<!-- Header -->
 	<div class="text-center">
 		<h1 class="text-3xl font-bold {theme.neutral.textStrong} mb-2">
-			Daily Draft #{puzzle.puzzle_number}
+			Topick #{puzzle.puzzle_number}
 		</h1>
 		<p class="text-xl {theme.neutral.textStrong}">{puzzle.prompt}</p>
 		<p class="text-sm {theme.neutral.text} mt-1">{formatDate(puzzle.daily_date)}</p>
@@ -70,16 +70,16 @@
 			<div class="text-center">
 				<h2 class="text-5xl font-bold mb-2">{results.submission.total_score}/8</h2>
 				<p class="text-xl opacity-90 flex items-center justify-center gap-2">
-					Base: {results.submission.base_score}/5 • Captain:
+					Top 5: {results.submission.base_score}/5
 					{#if captainCorrect}
 						<span class="flex items-center gap-1">
-							<Icon src={Check} mini size="20" class="inline" />
-							+3
+							<Icon src={Star} mini size="20" class="inline" />
+							Nailed the #1! +3
 						</span>
 					{:else}
 						<span class="flex items-center gap-1">
 							<Icon src={XMark} mini size="20" class="inline" />
-							+0
+							Missed #1
 						</span>
 					{/if}
 				</p>
@@ -112,7 +112,7 @@
 						{#if isDrafted}
 							<span class="px-3 py-1 {theme.success.bg} text-white text-sm rounded-full font-medium flex items-center gap-1">
 								<Icon src={Check} mini size="14" class="inline" />
-								Drafted
+								Correct
 							</span>
 						{:else}
 							<span class="px-3 py-1 {theme.neutral.bg} text-white text-sm rounded-full font-medium flex items-center gap-1">
@@ -123,21 +123,21 @@
 						{#if isCaptain}
 							<span class="px-3 py-1 {theme.accent.bg} {theme.accent.text} text-sm rounded-full font-bold flex items-center gap-1">
 								<Icon src={Star} mini size="14" class="inline" />
-								Captain
+								Your #1
 							</span>
 						{/if}
 					</div>
 				</div>
 			{/each}
 
-			<!-- Show incorrect drafts -->
+			<!-- Show incorrect guesses -->
 			{#if results.submission.drafted_items.filter((item) => !trueTop5.map(([i]) => i).includes(item)).length > 0}
 				{@const incorrectDrafts = results.submission.drafted_items.filter(
 					(item) => !trueTop5.map(([i]) => i).includes(item)
 				)}
 				<div class="mt-4">
 					<p class="text-sm font-semibold {theme.neutral.text} mb-2">
-						Your incorrect picks:
+						Your incorrect guesses:
 					</p>
 					<div class="flex flex-wrap gap-2">
 						{#each incorrectDrafts as item}
@@ -176,10 +176,10 @@
 									Item
 								</th>
 								<th class="px-4 py-3 text-center text-xs font-semibold {theme.neutral.text} uppercase">
-									Drafted
+									Selected %
 								</th>
 								<th class="px-4 py-3 text-center text-xs font-semibold {theme.neutral.text} uppercase">
-									Captained
+									Picked as #1 %
 								</th>
 							</tr>
 						</thead>

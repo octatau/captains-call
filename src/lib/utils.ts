@@ -1,6 +1,6 @@
-// Utility functions for Captain's Call
+// Utility functions for Topick
 
-const STORAGE_KEY = 'captains_call_user_id';
+const STORAGE_KEY = 'topick_user_id';
 
 /**
  * Client-side only: Get or create user ID from localStorage
@@ -150,13 +150,21 @@ export function generateShareText(
 		.sort((a, b) => a[1] - b[1])
 		.map(([item, _]) => item);
 
-	// Generate emoji grid (🟩 = drafted & correct, ⬛ = correct but undrafted)
-	const shareEmojis = trueTop5.map((item) => (draftedItems.includes(item) ? '🟩' : '⬛')).join('');
+	// Count correct predictions
+	const correctCount = trueTop5.filter((item) => draftedItems.includes(item)).length;
 
-	// Captain status
-	const captainStatus = trueRankings[captain] === 1 ? '⭐ Captain: ✅' : '⭐ Captain: ❌';
+	// Check #1 prediction
+	const nailedTheOne = trueRankings[captain] === 1;
 
-	return `Daily Draft #${puzzleNumber}\n${shareEmojis}\n${captainStatus}\nScore: ${totalScore}/8`;
+	// Build share text without emojis
+	const lines = [
+		`Topick #${puzzleNumber}`,
+		`Score: ${totalScore}/8`,
+		`Top 5 guesses: ${correctCount}/5 correct`,
+		nailedTheOne ? '#1 guess: Correct!' : '#1 guess: Missed'
+	];
+
+	return lines.join('\n');
 }
 
 /**

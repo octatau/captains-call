@@ -1,4 +1,4 @@
-// TypeScript type definitions for Captain's Call
+// TypeScript type definitions for Topick
 
 export interface Puzzle {
 	id: string;

@@ -36,7 +36,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<title>Captain's Call</title>
+	<title>Topick</title>
 </svelte:head>
 
 <!-- Theme Toggle Button (Fixed Position) -->

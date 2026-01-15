@@ -48,13 +48,17 @@
 
 <div class="fade-in">
 	<header class="text-center mb-8">
-		<h1 class="text-4xl font-bold mb-2 text-gray-900 dark:text-white">Captain's Call</h1>
+		<h1 class="text-4xl font-bold mb-2 text-gray-900 dark:text-white">Topick</h1>
+		<p class="text-sm text-gray-500 dark:text-gray-500 font-medium">Guess the Rankings</p>
 		<p class="text-gray-600 dark:text-gray-400">Puzzle #{puzzle.puzzle_number}</p>
 	</header>
 
 	<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
 		<h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{puzzle.prompt}</h2>
-		<p class="text-gray-600 dark:text-gray-400 mb-4">Draft your top 5 and choose a Captain</p>
+		<div class="text-gray-600 dark:text-gray-400 mb-4 space-y-1">
+			<p class="font-semibold">Which 5 are in the top 5?</p>
+			<p class="text-sm">Then: Which one is #1?</p>
+		</div>
 
 		<div class="grid gap-3">
 			{#each puzzle.items as item}
@@ -74,12 +78,12 @@
 						<span class="font-medium text-gray-900 dark:text-white">{item}</span>
 						<div class="flex items-center gap-2">
 							{#if isDrafted && !isCaptain}
-								<span class="text-pearl-aqua-600 dark:text-pearl-aqua-400 text-sm font-semibold">Drafted</span>
+								<span class="text-pearl-aqua-600 dark:text-pearl-aqua-400 text-sm font-semibold">Selected</span>
 							{/if}
 							{#if isCaptain}
 								<span class="px-2 py-0.5 text-xs font-bold bg-jasmine-500 text-gray-900 rounded flex items-center gap-1">
 									<Icon src={Star} mini size="14" class="inline" />
-									CAPTAIN
+									YOUR #1
 								</span>
 							{/if}
 						</div>
@@ -92,7 +96,7 @@
 			<div class="text-sm text-gray-600 dark:text-gray-400">
 				Selected: {draftedItems.length}/5
 				{#if captain}
-					| Captain: {captain}
+					| Your #1: {captain}
 				{/if}
 			</div>
 			<button
@@ -102,14 +106,14 @@
 					? 'bg-pearl-aqua-600 text-white hover:bg-pearl-aqua-700 dark:bg-pearl-aqua-500 dark:hover:bg-pearl-aqua-600'
 					: 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'}"
 			>
-				Submit Draft
+				Submit Guesses
 			</button>
 		</div>
 	</div>
 
 	<div class="text-center text-sm text-gray-600 dark:text-gray-400">
-		<p class="mb-1"><strong>Scoring:</strong> +1 for each item in true top 5</p>
-		<p>+3 bonus if your Captain is ranked #1</p>
+		<p class="mb-1"><strong>Scoring:</strong> +1 for each correct top 5 guess (max 5)</p>
+		<p>+3 bonus if you correctly guess the #1 (max 8 total)</p>
 	</div>
 </div>
 

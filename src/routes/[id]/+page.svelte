@@ -108,8 +108,8 @@
 </script>
 
 <svelte:head>
-	<title>Puzzle #{puzzleId} - Captain's Call</title>
-	<meta name="description" content="Captain's Call puzzle #{puzzleId}" />
+	<title>Puzzle #{puzzleId} - Topick</title>
+	<meta name="description" content="Topick puzzle #{puzzleId}" />
 </svelte:head>
 
 <div class="min-h-screen {theme.page.bg} transition-colors">
@@ -127,7 +127,7 @@
 				href="/archive"
 				class="{theme.primary.text} hover:text-pearl-aqua-700 dark:hover:text-pearl-aqua-300 text-sm font-medium"
 			>
-				View Past Drafts
+				View Archive
 			</a>
 		</div>
 

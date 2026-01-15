@@ -47,8 +47,8 @@
 </script>
 
 <svelte:head>
-	<title>Past Drafts - Captain's Call</title>
-	<meta name="description" content="View past Captain's Call puzzles" />
+	<title>Archive - Topick</title>
+	<meta name="description" content="View past Topick puzzles" />
 </svelte:head>
 
 <div class="min-h-screen {theme.page.bg} transition-colors">
@@ -67,7 +67,7 @@
 		<div class="space-y-6">
 			<!-- Header -->
 			<div class="text-center">
-				<h1 class="text-3xl font-bold {theme.neutral.textStrong} mb-2">Past Drafts</h1>
+				<h1 class="text-3xl font-bold {theme.neutral.textStrong} mb-2">Puzzle Archive</h1>
 				<p class="{theme.neutral.text}">
 					Play past puzzles you missed or revisit your results
 				</p>

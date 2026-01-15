@@ -31,17 +31,17 @@ export const POST: RequestHandler = async ({ request }) => {
 			new Set(drafted_items).size !== 5
 		) {
 			return json(
-				{ success: false, error: 'Must draft exactly 5 unique items' } as APIResponse<never>,
+				{ success: false, error: 'Must select exactly 5 unique items' } as APIResponse<never>,
 				{ status: 400 }
 			);
 		}
 
-		// Validate captain
+		// Validate captain (user's #1 guess)
 		if (!captain || !drafted_items.includes(captain)) {
 			return json(
 				{
 					success: false,
-					error: 'Captain must be one of your drafted items'
+					error: 'Your #1 guess must be one of your selected items'
 				} as APIResponse<never>,
 				{ status: 400 }
 			);
@@ -63,7 +63,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		const puzzle = puzzleData as unknown as DBPuzzle;
 
-		// Verify all drafted items exist in puzzle items
+		// Verify all selected items exist in puzzle items
 		const validItems = drafted_items.every((item) => puzzle.items.includes(item));
 		if (!validItems) {
 			return json(

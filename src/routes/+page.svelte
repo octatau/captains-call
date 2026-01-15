@@ -91,10 +91,10 @@
 </script>
 
 <svelte:head>
-	<title>Captain's Call - Daily Draft Game</title>
+	<title>Topick - Daily Ranking Game</title>
 	<meta
 		name="description"
-		content="Draft the best 5 out of 10 — choose a Captain — and see how everyone else picked."
+		content="Guess the top 5 rankings from real-world data. Can you guess the #1?"
 	/>
 </svelte:head>
 
@@ -106,7 +106,7 @@
 				href="/archive"
 				class="text-pearl-aqua-600 hover:text-pearl-aqua-700 dark:text-pearl-aqua-400 dark:hover:text-pearl-aqua-300 text-sm font-medium"
 			>
-				View Past Drafts
+				View Archive
 			</a>
 		</div>
 
