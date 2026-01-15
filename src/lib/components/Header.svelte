@@ -2,6 +2,7 @@
 	import { Icon, Moon, Sun } from 'svelte-hero-icons';
 	import { theme } from '$lib/theme';
 	import { page } from '$app/stores';
+	import Logo from './Logo.svelte';
 
 	interface Props {
 		darkMode: boolean;
@@ -18,9 +19,12 @@
 	<div class="container mx-auto px-4 py-3 max-w-4xl">
 		<div class="flex items-center justify-between gap-4">
 			<!-- Left: Logo/Title -->
-			<a href="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-				<h1 class="text-xl font-bold {theme.neutral.textStrong}">Topick</h1>
-				<span class="hidden sm:inline text-xs {theme.neutral.text} font-medium">Guess the Rankings</span>
+			<a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+				<Logo size={32} />
+				<div class="flex flex-col">
+					<h1 class="text-xl font-bold {theme.neutral.textStrong} leading-tight">Topick</h1>
+					<span class="hidden sm:block text-xs {theme.neutral.text} font-medium leading-tight">Guess the Rankings</span>
+				</div>
 			</a>
 
 			<!-- Right: Navigation & Dark Mode Toggle -->
