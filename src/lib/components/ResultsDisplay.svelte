@@ -62,102 +62,119 @@
 
 <div class="space-y-6">
 	<!-- Header -->
-	<div class="text-center">
-		<h1 class="text-3xl font-bold {theme.neutral.textStrong} mb-2">
-			Topick #{puzzle.puzzle_number}
-		</h1>
-		<p class="text-xl {theme.neutral.textStrong}">{puzzle.prompt}</p>
-		<p class="text-sm {theme.neutral.text} mt-1">{formatDate(puzzle.daily_date)}</p>
+	<div class="text-center mb-6">
+		<p class="text-sm {theme.neutral.text} mb-2">Topick #{puzzle.puzzle_number}</p>
+		<h1 class="text-2xl font-bold {theme.neutral.textStrong} mb-1">{puzzle.prompt}</h1>
+		<p class="text-sm {theme.neutral.text}">{formatDate(puzzle.daily_date)}</p>
 	</div>
 
 	<!-- Layer 1: Score Summary -->
 	{#if revealLayer >= 1}
-		<div class="bg-pearl-aqua-600 dark:bg-pearl-aqua-500 text-white rounded-lg p-6 shadow-xl animate-fadeIn">
+		<div class="bg-pearl-aqua-600 dark:bg-pearl-aqua-500 text-white rounded-lg p-8 shadow-xl animate-fadeIn mb-6">
 			<div class="text-center">
-				<h2 class="text-5xl font-bold mb-2">{results.submission.total_score}/8</h2>
-				<p class="text-xl opacity-90 flex items-center justify-center gap-2">
-					Top 5: {results.submission.base_score}/5
-					{#if captainCorrect}
-						<span class="flex items-center gap-1">
-							<Icon src={Star} mini size="20" class="inline" />
-							Nailed the #1! +3
-						</span>
-					{:else}
-						<span class="flex items-center gap-1">
-							<Icon src={XMark} mini size="20" class="inline" />
-							Missed #1
-						</span>
-					{/if}
-				</p>
+				<p class="text-sm uppercase tracking-wide opacity-80 mb-2">Your Score</p>
+				<h2 class="text-6xl font-bold mb-4">{results.submission.total_score}/8</h2>
+				<div class="flex items-center justify-center gap-6 text-lg">
+					<div class="flex items-center gap-2">
+						<Icon src={Check} mini size="20" />
+						<span>{results.submission.base_score}/5 in top 5</span>
+					</div>
+					<div class="opacity-50">•</div>
+					<div class="flex items-center gap-2">
+						{#if captainCorrect}
+							<Icon src={Star} mini size="20" />
+							<span>Nailed #1! (+3)</span>
+						{:else}
+							<Icon src={XMark} mini size="20" />
+							<span>Missed #1</span>
+						{/if}
+					</div>
+				</div>
 			</div>
 		</div>
 	{/if}
 
-	<!-- Layer 2: True Rankings -->
+	<!-- Layer 2: Your Guesses vs Reality -->
 	{#if revealLayer >= 2}
-		<div class="space-y-3 animate-fadeIn">
-			<h3 class="text-xl font-bold {theme.neutral.textStrong}">True Top 5:</h3>
+		<div class="animate-fadeIn space-y-6">
+			<!-- Section Header -->
+			<div class="text-center">
+				<h3 class="text-2xl font-bold {theme.neutral.textStrong} mb-2">Your Guesses vs Reality</h3>
+				<p class="text-sm {theme.neutral.text}">Here's how you did</p>
+			</div>
 
-			{#each trueTop5 as [item, rank]}
-				{@const isDrafted = results.submission.drafted_items.includes(item)}
-				{@const isCaptain = results.submission.captain === item}
+			<!-- The Actual Top 5 -->
+			<div class="{theme.card.bg} rounded-lg border {theme.card.border} p-6">
+				<h4 class="text-lg font-bold {theme.neutral.textStrong} mb-4 flex items-center gap-2">
+					<Icon src={Check} mini size="20" class="{theme.primary.text}" />
+					The Actual Top 5
+				</h4>
+				<div class="space-y-2">
+					{#each trueTop5 as [item, rank]}
+						{@const youPicked = results.submission.drafted_items.includes(item)}
+						{@const yourTopPick = results.submission.captain === item}
 
-				<div
-					class="flex items-center gap-3 p-4 rounded-lg border-2 transition-all
-					{isDrafted
-						? `${theme.success.border} ${theme.success.bgLight}`
-						: `${theme.neutral.border} ${theme.neutral.bgLight}`}"
-				>
-					<div class="text-2xl font-bold {theme.neutral.text} w-8">
-						#{rank}
-					</div>
-					<div class="flex-1">
-						<span class="font-semibold {theme.neutral.textStrong}">{item}</span>
-					</div>
-					<div class="flex gap-2">
-						{#if isDrafted}
-							<span class="px-3 py-1 {theme.success.bg} text-white text-sm rounded-full font-medium flex items-center gap-1">
-								<Icon src={Check} mini size="14" class="inline" />
-								Correct
-							</span>
-						{:else}
-							<span class="px-3 py-1 {theme.neutral.bg} text-white text-sm rounded-full font-medium flex items-center gap-1">
-								<Icon src={XMark} mini size="14" class="inline" />
-								Missed
-							</span>
-						{/if}
-						{#if isCaptain}
-							<span class="px-3 py-1 {theme.accent.bg} {theme.accent.text} text-sm rounded-full font-bold flex items-center gap-1">
-								<Icon src={Star} mini size="14" class="inline" />
-								Your #1
-							</span>
-						{/if}
-					</div>
+						<div class="flex items-center gap-3 p-3 rounded-lg {youPicked ? 'bg-pearl-aqua-50 dark:bg-pearl-aqua-900/20' : 'bg-gray-50 dark:bg-gray-800'}">
+							<div class="flex items-center justify-center w-10 h-10 rounded-full {youPicked ? 'bg-pearl-aqua-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'} font-bold text-lg">
+								{rank}
+							</div>
+							<div class="flex-1">
+								<p class="font-semibold {theme.neutral.textStrong}">{item}</p>
+							</div>
+							<div class="flex items-center gap-2">
+								{#if youPicked}
+									<div class="flex items-center gap-1 px-3 py-1 bg-pearl-aqua-600 text-white rounded-full text-sm font-medium">
+										<Icon src={Check} mini size="14" />
+										You got this!
+									</div>
+								{:else}
+									<div class="flex items-center gap-1 px-3 py-1 bg-gray-400 dark:bg-gray-600 text-white rounded-full text-sm">
+										<Icon src={XMark} mini size="14" />
+										Missed
+									</div>
+								{/if}
+								{#if yourTopPick}
+									<div class="flex items-center gap-1 px-3 py-1 bg-jasmine-500 text-gray-900 rounded-full text-sm font-bold">
+										<Icon src={Star} mini size="14" />
+										Your #1
+									</div>
+								{/if}
+							</div>
+						</div>
+					{/each}
 				</div>
-			{/each}
+			</div>
 
-			<!-- Show incorrect guesses -->
+			<!-- Your Incorrect Guesses (if any) -->
 			{#if results.submission.drafted_items.filter((item) => !trueTop5.map(([i]) => i).includes(item)).length > 0}
-				{@const incorrectDrafts = results.submission.drafted_items.filter(
+				{@const incorrectGuesses = results.submission.drafted_items.filter(
 					(item) => !trueTop5.map(([i]) => i).includes(item)
 				)}
-				<div class="mt-4">
-					<p class="text-sm font-semibold {theme.neutral.text} mb-2">
-						Your incorrect guesses:
-					</p>
-					<div class="flex flex-wrap gap-2">
-						{#each incorrectDrafts as item}
-							{@const isCaptain = results.submission.captain === item}
-							<span
-								class="px-3 py-1 {theme.error.bgLight} {theme.error.text} rounded-full text-sm font-medium border {theme.error.border} flex items-center gap-1"
-							>
-								<Icon src={XMark} mini size="14" class="inline" />
-								{item}
-								{#if isCaptain}
-									<Icon src={Star} mini size="14" class="inline" />
+				<div class="bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 p-6">
+					<h4 class="text-lg font-bold text-red-800 dark:text-red-200 mb-4 flex items-center gap-2">
+						<Icon src={XMark} mini size="20" />
+						Items You Picked (But Weren't in Top 5)
+					</h4>
+					<div class="space-y-2">
+						{#each incorrectGuesses as item}
+							{@const yourTopPick = results.submission.captain === item}
+							{@const actualRank = results.puzzle.true_rankings[item]}
+
+							<div class="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-gray-800">
+								<div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold">
+									{actualRank}
+								</div>
+								<div class="flex-1">
+									<p class="font-semibold {theme.neutral.textStrong}">{item}</p>
+									<p class="text-sm {theme.neutral.text}">Actually ranked #{actualRank}</p>
+								</div>
+								{#if yourTopPick}
+									<div class="flex items-center gap-1 px-3 py-1 bg-jasmine-500 text-gray-900 rounded-full text-sm font-bold">
+										<Icon src={Star} mini size="14" />
+										Your #1 pick
+									</div>
 								{/if}
-								(#{results.puzzle.true_rankings[item]})
-							</span>
+							</div>
 						{/each}
 					</div>
 				</div>
@@ -169,40 +186,55 @@
 	{#if revealLayer >= 3}
 		<div class="space-y-6 animate-fadeIn">
 			<!-- Crowd Statistics -->
-			<div>
-				<h3 class="text-xl font-bold {theme.neutral.textStrong} mb-3">How Others Played:</h3>
-				<div class="{theme.card.bg} rounded-lg border {theme.card.border} overflow-hidden">
+			<div class="{theme.card.bg} rounded-lg border {theme.card.border} p-6">
+				<h3 class="text-xl font-bold {theme.neutral.textStrong} mb-2">How Everyone Else Guessed</h3>
+				<p class="text-sm {theme.neutral.text} mb-4">See what percentage of players selected each item</p>
+				<div class="overflow-x-auto">
 					<table class="w-full">
-						<thead class="{theme.neutral.bgLight}">
-							<tr>
-								<th class="px-4 py-3 text-left text-xs font-semibold {theme.neutral.text} uppercase">
+						<thead>
+							<tr class="border-b-2 {theme.card.border}">
+								<th class="px-4 py-3 text-left text-xs font-bold {theme.neutral.textStrong} uppercase">
 									Rank
 								</th>
-								<th class="px-4 py-3 text-left text-xs font-semibold {theme.neutral.text} uppercase">
+								<th class="px-4 py-3 text-left text-xs font-bold {theme.neutral.textStrong} uppercase">
 									Item
 								</th>
-								<th class="px-4 py-3 text-center text-xs font-semibold {theme.neutral.text} uppercase">
-									Selected %
+								<th class="px-4 py-3 text-center text-xs font-bold {theme.neutral.textStrong} uppercase">
+									% Who Picked It
 								</th>
-								<th class="px-4 py-3 text-center text-xs font-semibold {theme.neutral.text} uppercase">
-									Picked as #1 %
+								<th class="px-4 py-3 text-center text-xs font-bold {theme.neutral.textStrong} uppercase">
+									% Who Made It #1
 								</th>
 							</tr>
 						</thead>
 						<tbody class="divide-y {theme.card.border}">
 							{#each results.crowd_stats as stat}
-								<tr class="{theme.neutral.borderHover}">
-									<td class="px-4 py-3 text-sm font-medium {theme.neutral.textStrong}">
+								{@const youPicked = results.submission.drafted_items.includes(stat.item_name)}
+								<tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors {youPicked ? 'bg-pearl-aqua-50 dark:bg-pearl-aqua-900/10' : ''}">
+									<td class="px-4 py-3 text-sm font-bold {theme.neutral.textStrong}">
 										#{stat.rank}
 									</td>
-									<td class="px-4 py-3 text-sm {theme.neutral.textStrong}">
+									<td class="px-4 py-3 text-sm font-medium {theme.neutral.textStrong}">
 										{stat.item_name}
+										{#if youPicked}
+											<span class="text-xs {theme.primary.text} ml-2">(You picked this)</span>
+										{/if}
 									</td>
-									<td class="px-4 py-3 text-center text-sm {theme.neutral.text}">
-										{stat.drafted_percentage}%
+									<td class="px-4 py-3 text-center">
+										<div class="flex items-center justify-center gap-2">
+											<div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+												<div class="bg-pearl-aqua-600 h-2 rounded-full" style="width: {stat.drafted_percentage}%"></div>
+											</div>
+											<span class="text-sm font-medium {theme.neutral.textStrong} w-12 text-right">{stat.drafted_percentage}%</span>
+										</div>
 									</td>
-									<td class="px-4 py-3 text-center text-sm {theme.neutral.text}">
-										{stat.captained_percentage}%
+									<td class="px-4 py-3 text-center">
+										<div class="flex items-center justify-center gap-2">
+											<div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+												<div class="bg-jasmine-500 h-2 rounded-full" style="width: {stat.captained_percentage}%"></div>
+											</div>
+											<span class="text-sm font-medium {theme.neutral.textStrong} w-12 text-right">{stat.captained_percentage}%</span>
+										</div>
 									</td>
 								</tr>
 							{/each}
