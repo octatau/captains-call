@@ -56,7 +56,7 @@
 	<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
 		<h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{puzzle.prompt}</h2>
 		<div class="text-gray-600 dark:text-gray-400 mb-4 space-y-1">
-			<p class="font-semibold">Which 5 are in the top 5?</p>
+			<p class="font-semibold">Which of these are in the top 5?</p>
 			<p class="text-sm">Then: Which one is #1?</p>
 		</div>
 
