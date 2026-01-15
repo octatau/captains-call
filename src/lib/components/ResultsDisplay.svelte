@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { Puzzle, Results } from '$lib/types';
-	import { shareResults, calculateTimeUntilNextPuzzle, formatDate } from '$lib/utils';
+	import { calculateTimeUntilNextPuzzle, formatDate } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import { Icon, Check, XMark, Star, BookOpen, Share } from 'svelte-hero-icons';
 	import { theme } from '$lib/theme';
+	import ShareModal from './ShareModal.svelte';
 
 	interface Props {
 		puzzle: Puzzle;
@@ -15,6 +16,7 @@
 	let revealLayer = $state(0);
 	let nextPuzzleTime = $state('');
 	let interval: ReturnType<typeof setInterval> | null = null;
+	let showShareModal = $state(false);
 
 	onMount(() => {
 		// Layer 1: Score summary (immediate)
@@ -50,7 +52,11 @@
 	const captainCorrect = $derived(results.puzzle.true_rankings[results.submission.captain] === 1);
 
 	function handleShare() {
-		shareResults(results.share_text);
+		showShareModal = true;
+	}
+
+	function closeShareModal() {
+		showShareModal = false;
 	}
 </script>
 
@@ -243,6 +249,17 @@
 		</div>
 	{/if}
 </div>
+
+<!-- Share Modal -->
+{#if showShareModal}
+	<ShareModal
+		shareText={results.share_text}
+		shareUrl={typeof window !== 'undefined' ? window.location.href : ''}
+		{results}
+		puzzleNumber={puzzle.puzzle_number}
+		onClose={closeShareModal}
+	/>
+{/if}
 
 <style>
 	@keyframes fadeIn {

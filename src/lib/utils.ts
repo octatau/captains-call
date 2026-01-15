@@ -194,3 +194,93 @@ export function isToday(dateString: string): boolean {
 		date.getDate() === today.getDate()
 	);
 }
+
+/**
+ * Generate an image from a DOM element using html2canvas
+ * Returns a Blob that can be downloaded or shared
+ */
+export async function generateImageFromElement(element: HTMLElement): Promise<Blob | null> {
+	try {
+		const html2canvas = (await import('html2canvas')).default;
+
+		const canvas = await html2canvas(element, {
+			backgroundColor: null,
+			scale: 2, // Higher quality
+			logging: false,
+			windowWidth: element.scrollWidth,
+			windowHeight: element.scrollHeight
+		});
+
+		return new Promise((resolve) => {
+			canvas.toBlob((blob) => {
+				resolve(blob);
+			}, 'image/png');
+		});
+	} catch (error) {
+		console.error('Failed to generate image:', error);
+		return null;
+	}
+}
+
+/**
+ * Download an image blob with a given filename
+ */
+export function downloadImage(blob: Blob, filename: string): void {
+	const url = URL.createObjectURL(blob);
+	const link = document.createElement('a');
+	link.href = url;
+	link.download = filename;
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
+}
+
+/**
+ * Share image using Web Share API (if supported)
+ * Falls back to download if not supported
+ */
+export async function shareImage(blob: Blob, filename: string, text: string): Promise<boolean> {
+	// Check if Web Share API Level 2 is supported (allows sharing files)
+	if (navigator.share && navigator.canShare) {
+		const file = new File([blob], filename, { type: 'image/png' });
+		const shareData = {
+			files: [file],
+			text: text
+		};
+
+		if (navigator.canShare(shareData)) {
+			try {
+				await navigator.share(shareData);
+				return true;
+			} catch (error) {
+				// User cancelled or error occurred
+				if (error instanceof Error && error.name === 'AbortError') {
+					return false;
+				}
+				console.error('Share failed:', error);
+			}
+		}
+	}
+
+	// Fallback to download
+	downloadImage(blob, filename);
+	return false;
+}
+
+/**
+ * Copy image to clipboard (supported in modern browsers)
+ */
+export async function copyImageToClipboard(blob: Blob): Promise<boolean> {
+	try {
+		if (navigator.clipboard && 'write' in navigator.clipboard) {
+			const item = new ClipboardItem({ 'image/png': blob });
+			await navigator.clipboard.write([item]);
+			return true;
+		}
+		return false;
+	} catch (error) {
+		console.error('Failed to copy image to clipboard:', error);
+		return false;
+	}
+}
