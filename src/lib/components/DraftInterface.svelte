@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Puzzle } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
-	import { Icon, Star } from 'svelte-hero-icons';
+	import { Icon, Star, XMark } from 'svelte-hero-icons';
 
 	interface Props {
 		puzzle: Puzzle;
@@ -21,18 +21,25 @@
 
 	function handleItemClick(item: string) {
 		const isDrafted = draftedItems.includes(item);
-		const isCaptain = captain === item;
 
-		if (isCaptain) {
-			// Clicking captain cycles back to undrafted
-			captain = null;
-			draftedItems = draftedItems.filter((i) => i !== item);
-		} else if (isDrafted) {
-			// Clicking drafted item makes it captain
-			captain = item;
-		} else if (draftedItems.length < 5) {
+		if (!isDrafted && draftedItems.length < 5) {
 			// Draft the item
 			draftedItems = [...draftedItems, item];
+		}
+	}
+
+	function handleRemoveItem(item: string) {
+		draftedItems = draftedItems.filter((i) => i !== item);
+		if (captain === item) {
+			captain = null;
+		}
+	}
+
+	function handleToggleCaptain(item: string) {
+		if (captain === item) {
+			captain = null;
+		} else {
+			captain = item;
 		}
 	}
 
@@ -62,50 +69,73 @@
 			{#each puzzle.items as item}
 				{@const isDrafted = draftedItems.includes(item)}
 				{@const isCaptain = captain === item}
-				{@const draftIndex = draftedItems.indexOf(item)}
 				{@const isDisabled = !isDrafted && draftedItems.length >= 5}
 
-				<button
-					onclick={() => handleItemClick(item)}
-					disabled={isDisabled}
-					class="relative w-full text-left px-4 py-3 rounded-lg border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed {isDrafted
+				<div
+					class="relative w-full px-4 py-3 rounded-lg border-2 transition-all {isDrafted
 						? 'border-pearl-aqua-600 dark:border-pearl-aqua-500 bg-pearl-aqua-50 dark:bg-pearl-aqua-900/50'
-						: 'border-gray-300 dark:border-gray-600 hover:border-pearl-aqua-400 dark:hover:border-pearl-aqua-500 bg-white dark:bg-gray-700'}"
+						: isDisabled
+							? 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 opacity-50 cursor-not-allowed'
+							: 'border-gray-300 dark:border-gray-600 hover:border-pearl-aqua-400 dark:hover:border-pearl-aqua-500 bg-white dark:bg-gray-700 cursor-pointer'}"
+					onclick={() => !isDrafted && handleItemClick(item)}
 				>
-					<div class="flex items-center justify-between">
+					<div class="flex items-center justify-between gap-3">
 						<span class="font-medium text-gray-900 dark:text-white">{item}</span>
-						<div class="flex items-center gap-2">
-							{#if isDrafted && !isCaptain}
-								<span class="text-pearl-aqua-600 dark:text-pearl-aqua-400 text-sm font-semibold">Selected</span>
-							{/if}
-							{#if isCaptain}
-								<span class="px-2 py-0.5 text-xs font-bold bg-jasmine-500 text-gray-900 rounded flex items-center gap-1">
-									<Icon src={Star} mini size="14" class="inline" />
-									YOUR #1
-								</span>
-							{/if}
-						</div>
+						{#if isDrafted}
+							<div class="flex items-center gap-2">
+								<button
+									onclick={(e) => {
+										e.stopPropagation();
+										handleToggleCaptain(item);
+									}}
+									class="p-1.5 rounded transition-colors {isCaptain
+										? 'bg-jasmine-500 text-gray-900 hover:bg-jasmine-600'
+										: 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-400 dark:hover:bg-gray-500'}"
+									title={isCaptain ? 'Remove as #1' : 'Make #1'}
+								>
+									<Icon src={Star} mini size="16" />
+								</button>
+								<button
+									onclick={(e) => {
+										e.stopPropagation();
+										handleRemoveItem(item);
+									}}
+									class="p-1 rounded text-gray-500 dark:text-gray-400 hover:bg-pearl-aqua-100 dark:hover:bg-pearl-aqua-900/30 hover:text-pearl-aqua-600 dark:hover:text-pearl-aqua-400 transition-colors"
+									title="Remove selection"
+								>
+									<Icon src={XMark} mini size="18" />
+								</button>
+							</div>
+						{/if}
 					</div>
-				</button>
+				</div>
 			{/each}
 		</div>
 
-		<div class="mt-6 flex items-center justify-between">
-			<div class="text-sm text-gray-600 dark:text-gray-400">
-				Selected: {draftedItems.length}/5
-				{#if captain}
-					| Your #1: {captain}
-				{/if}
+		<div class="mt-6 space-y-3">
+			{#if draftedItems.length > 0 && !captain}
+				<div class="flex items-center gap-2 text-sm text-jasmine-700 dark:text-jasmine-400 bg-jasmine-50 dark:bg-jasmine-900/20 px-4 py-2 rounded-lg">
+					<Icon src={Star} mini size="16" />
+					<span>Click the <strong>star</strong> on your top choice to mark it as #1</span>
+				</div>
+			{/if}
+			<div class="flex items-center justify-between">
+				<div class="text-sm text-gray-600 dark:text-gray-400">
+					Selected: {draftedItems.length}/5
+					{#if captain}
+						| Your #1: {captain}
+					{/if}
+				</div>
+				<button
+					onclick={handleSubmit}
+					disabled={!canSubmit}
+					class="px-6 py-3 font-semibold rounded-lg transition-colors {canSubmit
+						? 'bg-pearl-aqua-600 text-white hover:bg-pearl-aqua-700 dark:bg-pearl-aqua-500 dark:hover:bg-pearl-aqua-600'
+						: 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'}"
+				>
+					Submit Guesses
+				</button>
 			</div>
-			<button
-				onclick={handleSubmit}
-				disabled={!canSubmit}
-				class="px-6 py-3 font-semibold rounded-lg transition-colors {canSubmit
-					? 'bg-pearl-aqua-600 text-white hover:bg-pearl-aqua-700 dark:bg-pearl-aqua-500 dark:hover:bg-pearl-aqua-600'
-					: 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'}"
-			>
-				Submit Guesses
-			</button>
 		</div>
 	</div>
 
