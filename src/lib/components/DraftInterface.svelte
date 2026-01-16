@@ -119,8 +119,8 @@
 					<span>Click the <strong>star</strong> on your top choice to mark it as #1</span>
 				</div>
 			{/if}
-			<div class="flex items-center justify-between">
-				<div class="text-sm text-gray-600 dark:text-gray-400">
+			<div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+				<div class="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
 					Selected: {draftedItems.length}/5
 					{#if captain}
 						| Your #1: {captain}
@@ -129,7 +129,7 @@
 				<button
 					onclick={handleSubmit}
 					disabled={!canSubmit}
-					class="px-6 py-3 font-semibold rounded-lg transition-colors {canSubmit
+					class="w-full sm:w-auto px-6 py-3 font-semibold rounded-lg transition-colors {canSubmit
 						? 'bg-pearl-aqua-600 text-white hover:bg-pearl-aqua-700 dark:bg-pearl-aqua-500 dark:hover:bg-pearl-aqua-600'
 						: 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'}"
 				>
