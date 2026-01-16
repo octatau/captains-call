@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { Puzzle } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
-	import { Icon, Star, XMark } from 'svelte-hero-icons';
+	import { Icon, Star, XMark, QuestionMarkCircle } from 'svelte-hero-icons';
+	import HowToPlayModal from './HowToPlayModal.svelte';
 
 	interface Props {
 		puzzle: Puzzle;
@@ -16,6 +17,7 @@
 
 	let draftedItems = $state<string[]>([]);
 	let captain = $state<string | null>(null);
+	let showHowToPlay = $state(false);
 
 	const canSubmit = $derived(draftedItems.length === 5 && captain !== null);
 
@@ -55,8 +57,17 @@
 
 <div class="fade-in">
 	<header class="text-center mb-8">
-		<p class="text-sm text-gray-500 dark:text-gray-400 font-medium mb-2">Topick #{puzzle.puzzle_number}</p>
-		<h1 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{puzzle.prompt}</h1>
+		<div class="flex justify-center items-center mb-2 relative">
+			<p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Topick #{puzzle.puzzle_number}</p>
+			<button
+				onclick={() => showHowToPlay = true}
+				class="absolute right-0 flex items-center gap-1 px-2 py-1 text-xs sm:text-sm text-pearl-aqua-600 dark:text-pearl-aqua-400 hover:bg-pearl-aqua-50 dark:hover:bg-pearl-aqua-900/20 rounded-lg transition-colors"
+			>
+				<Icon src={QuestionMarkCircle} mini size="16" class="sm:w-[18px] sm:h-[18px]" />
+				<span class="hidden sm:inline">How to Play</span>
+			</button>
+		</div>
+		<h1 class="text-2xl sm:text-3xl font-bold mb-4 text-gray-900 dark:text-white px-8 sm:px-0">{puzzle.prompt}</h1>
 	</header>
 
 	<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
@@ -144,6 +155,10 @@
 		<p>+3 bonus if you correctly guess the #1 (max 8 total)</p>
 	</div>
 </div>
+
+{#if showHowToPlay}
+	<HowToPlayModal onClose={() => showHowToPlay = false} />
+{/if}
 
 <style>
 	.fade-in {
