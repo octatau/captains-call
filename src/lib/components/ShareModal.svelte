@@ -192,7 +192,7 @@
 		<!-- Header -->
 		<div class="mb-4 sm:mb-6">
 			<h2 class="text-xl sm:text-2xl font-bold {theme.neutral.textStrong} mb-2">Share Your Results</h2>
-			<div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 sm:p-4 {theme.neutral.text} font-mono text-xs sm:text-sm whitespace-pre-line">
+			<div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 sm:p-4 {theme.neutral.text} text-sm sm:text-base whitespace-pre-line">
 				{shareText}
 			</div>
 		</div>

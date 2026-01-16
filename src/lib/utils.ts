@@ -156,12 +156,15 @@ export function generateShareText(
 	// Check #1 prediction
 	const nailedTheOne = trueRankings[captain] === 1;
 
-	// Build share text without emojis
+	// Build share text with better formatting and icons
 	const lines = [
-		`Topick #${puzzleNumber}`,
-		`Score: ${totalScore}/8`,
-		`Top 5 guesses: ${correctCount}/5 correct`,
-		nailedTheOne ? '#1 guess: Correct!' : '#1 guess: Missed'
+		`🎯 Topick #${puzzleNumber}`,
+		'',
+		`🏆 Score: ${totalScore}/8`,
+		`✓ Top 5: ${correctCount}/5`,
+		`⭐ #1 Pick: ${nailedTheOne ? '✓ Correct!' : '✗ Missed'}`,
+		'',
+		'Play today at Topickal!'
 	];
 
 	return lines.join('\n');
