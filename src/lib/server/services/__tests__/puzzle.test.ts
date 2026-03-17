@@ -5,7 +5,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { shuffleItems, buildArchiveList } from '../puzzle';
+import { shuffleItems, buildArchiveList, toApiPuzzle } from '../puzzle';
+import type { DBPuzzle } from '$lib/types';
 
 describe('shuffleItems', () => {
 	const items = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -256,5 +257,110 @@ describe('buildArchiveList', () => {
 		expect(result[0].id).toBe('p1');
 		expect(result[1].id).toBe('p2');
 		expect(result[2].id).toBe('p3');
+	});
+});
+
+describe('toApiPuzzle', () => {
+	const mockDbPuzzle: DBPuzzle = {
+		id: 'puzzle-123',
+		puzzle_number: 42,
+		daily_date: '2024-03-15',
+		prompt: 'Test prompt',
+		items: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+		true_rankings: { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9, J: 10 },
+		sources: ['Source 1', 'Source 2']
+	};
+
+	describe('field transformation', () => {
+		it('includes all required API fields', () => {
+			const result = toApiPuzzle(mockDbPuzzle, 'user-123', false);
+
+			expect(result).toHaveProperty('id');
+			expect(result).toHaveProperty('puzzle_number');
+			expect(result).toHaveProperty('daily_date');
+			expect(result).toHaveProperty('prompt');
+			expect(result).toHaveProperty('items');
+			expect(result).toHaveProperty('has_submitted');
+		});
+
+		it('copies id, puzzle_number, daily_date, prompt from DB puzzle', () => {
+			const result = toApiPuzzle(mockDbPuzzle, 'user-123', false);
+
+			expect(result.id).toBe(mockDbPuzzle.id);
+			expect(result.puzzle_number).toBe(mockDbPuzzle.puzzle_number);
+			expect(result.daily_date).toBe(mockDbPuzzle.daily_date);
+			expect(result.prompt).toBe(mockDbPuzzle.prompt);
+		});
+
+		it('sets has_submitted based on parameter', () => {
+			const notSubmitted = toApiPuzzle(mockDbPuzzle, 'user-123', false);
+			const hasSubmitted = toApiPuzzle(mockDbPuzzle, 'user-123', true);
+
+			expect(notSubmitted.has_submitted).toBe(false);
+			expect(hasSubmitted.has_submitted).toBe(true);
+		});
+	});
+
+	describe('sensitive field removal', () => {
+		it('does not include true_rankings in output', () => {
+			const result = toApiPuzzle(mockDbPuzzle, 'user-123', false);
+
+			expect(result).not.toHaveProperty('true_rankings');
+		});
+
+		it('does not include sources in output', () => {
+			const result = toApiPuzzle(mockDbPuzzle, 'user-123', false);
+
+			expect(result).not.toHaveProperty('sources');
+		});
+	});
+
+	describe('item shuffling', () => {
+		it('shuffles items for each user', () => {
+			const result = toApiPuzzle(mockDbPuzzle, 'user-123', false);
+
+			// Items should be shuffled (deterministic per user)
+			expect(result.items).toHaveLength(mockDbPuzzle.items.length);
+			expect(result.items.sort()).toEqual([...mockDbPuzzle.items].sort());
+		});
+
+		it('returns same shuffle for same user', () => {
+			const result1 = toApiPuzzle(mockDbPuzzle, 'user-123', false);
+			const result2 = toApiPuzzle(mockDbPuzzle, 'user-123', true);
+
+			expect(result1.items).toEqual(result2.items);
+		});
+
+		it('returns different shuffle for different users', () => {
+			const result1 = toApiPuzzle(mockDbPuzzle, 'user-one', false);
+			const result2 = toApiPuzzle(mockDbPuzzle, 'user-two', false);
+
+			// Extremely unlikely to be the same
+			expect(result1.items).not.toEqual(result2.items);
+		});
+	});
+
+	describe('edge cases', () => {
+		it('handles puzzle with empty items', () => {
+			const emptyPuzzle: DBPuzzle = {
+				...mockDbPuzzle,
+				items: []
+			};
+
+			const result = toApiPuzzle(emptyPuzzle, 'user-123', false);
+
+			expect(result.items).toEqual([]);
+		});
+
+		it('handles puzzle with single item', () => {
+			const singleItemPuzzle: DBPuzzle = {
+				...mockDbPuzzle,
+				items: ['Only']
+			};
+
+			const result = toApiPuzzle(singleItemPuzzle, 'user-123', false);
+
+			expect(result.items).toEqual(['Only']);
+		});
 	});
 });
