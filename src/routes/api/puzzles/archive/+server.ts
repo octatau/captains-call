@@ -1,7 +1,11 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { isValidUUID } from '$lib/utils';
 import type { APIResponse, ArchiveListResponse } from '$lib/types';
+import {
+	archiveQuerySchema,
+	formatValidationError,
+	createErrorResponse
+} from '$lib/server/validation';
 import {
 	getArchivePuzzles,
 	buildArchiveList,
@@ -10,23 +14,23 @@ import {
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {
-		const user_id = url.searchParams.get('user_id');
+		// Parse query parameters into an object for Zod validation
+		const queryParams = {
+			user_id: url.searchParams.get('user_id') ?? undefined
+		};
 
-		// Validate user_id
-		if (!user_id || !isValidUUID(user_id)) {
-			return json(
-				{ success: false, error: 'Invalid user_id format' } as APIResponse<never>,
-				{ status: 400 }
-			);
+		// Validate with Zod
+		const parseResult = archiveQuerySchema.safeParse(queryParams);
+		if (!parseResult.success) {
+			return formatValidationError(parseResult.error);
 		}
+
+		const { user_id } = parseResult.data;
 
 		// Fetch all puzzles
 		const puzzles = await getArchivePuzzles();
 		if (!puzzles) {
-			return json(
-				{ success: false, error: 'Failed to fetch puzzles' } as APIResponse<never>,
-				{ status: 500 }
-			);
+			return createErrorResponse('Failed to fetch puzzles', 500);
 		}
 
 		if (puzzles.length === 0) {
@@ -55,12 +59,6 @@ export const GET: RequestHandler = async ({ url }) => {
 		} as APIResponse<ArchiveListResponse>);
 	} catch (error) {
 		console.error('Error fetching archive:', error);
-		return json(
-			{
-				success: false,
-				error: 'Server error. Please try again.'
-			} as APIResponse<never>,
-			{ status: 500 }
-		);
+		return createErrorResponse('Server error. Please try again.', 500);
 	}
 };

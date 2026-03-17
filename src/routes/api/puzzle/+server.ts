@@ -1,65 +1,42 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { isValidUUID } from '$lib/utils';
 import type { APIResponse, Puzzle } from '$lib/types';
 import {
-	getPuzzle,
-	toApiPuzzle,
-	hasSubmitted
-} from '$lib/server/services';
+	puzzleQuerySchema,
+	formatValidationError,
+	createErrorResponse
+} from '$lib/server/validation';
+import { getPuzzle, toApiPuzzle, hasSubmitted } from '$lib/server/services';
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {
-		const user_id = url.searchParams.get('user_id');
-		const puzzle_id = url.searchParams.get('puzzle_id');
-		const puzzle_number = url.searchParams.get('puzzle_number');
-		const date = url.searchParams.get('date');
-		const timezone = url.searchParams.get('timezone');
+		// Parse query parameters into an object for Zod validation
+		const queryParams = {
+			user_id: url.searchParams.get('user_id') ?? undefined,
+			puzzle_id: url.searchParams.get('puzzle_id') ?? undefined,
+			puzzle_number: url.searchParams.get('puzzle_number') ?? undefined,
+			date: url.searchParams.get('date') ?? undefined,
+			timezone: url.searchParams.get('timezone') ?? undefined
+		};
 
-		// Validate user_id
-		if (!user_id || !isValidUUID(user_id)) {
-			return json(
-				{ success: false, error: 'Invalid user_id format' } as APIResponse<never>,
-				{ status: 400 }
-			);
+		// Validate with Zod
+		const parseResult = puzzleQuerySchema.safeParse(queryParams);
+		if (!parseResult.success) {
+			return formatValidationError(parseResult.error);
 		}
 
-		// Validate puzzle_id if provided
-		if (puzzle_id && !isValidUUID(puzzle_id)) {
-			return json(
-				{ success: false, error: 'Invalid puzzle_id format' } as APIResponse<never>,
-				{ status: 400 }
-			);
-		}
-
-		// Validate puzzle_number if provided
-		let parsedPuzzleNumber: number | undefined;
-		if (puzzle_number) {
-			parsedPuzzleNumber = parseInt(puzzle_number);
-			if (isNaN(parsedPuzzleNumber)) {
-				return json(
-					{ success: false, error: 'Invalid puzzle_number format' } as APIResponse<never>,
-					{ status: 400 }
-				);
-			}
-		}
-
-		// Parse timezone offset
-		const timezoneOffset = timezone ? parseInt(timezone) : undefined;
+		const { user_id, puzzle_id, puzzle_number, date, timezone } = parseResult.data;
 
 		// Fetch puzzle using service
 		const dbPuzzle = await getPuzzle({
-			puzzleId: puzzle_id ?? undefined,
-			puzzleNumber: parsedPuzzleNumber,
-			date: date ?? undefined,
-			timezoneOffset
+			puzzleId: puzzle_id,
+			puzzleNumber: puzzle_number,
+			date: date,
+			timezoneOffset: timezone
 		});
 
 		if (!dbPuzzle) {
-			return json(
-				{ success: false, error: 'No puzzle available yet. Check back soon!' } as APIResponse<never>,
-				{ status: 404 }
-			);
+			return createErrorResponse('No puzzle available yet. Check back soon!', 404);
 		}
 
 		// Check if user has already submitted
@@ -74,12 +51,6 @@ export const GET: RequestHandler = async ({ url }) => {
 		} as APIResponse<Puzzle>);
 	} catch (error) {
 		console.error('Error fetching puzzle:', error);
-		return json(
-			{
-				success: false,
-				error: 'Server error. Please try again.'
-			} as APIResponse<never>,
-			{ status: 500 }
-		);
+		return createErrorResponse('Server error. Please try again.', 500);
 	}
 };

@@ -1,53 +1,40 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { isValidUUID, generateShareText } from '$lib/utils';
+import { generateShareText } from '$lib/utils';
 import type { APIResponse, Results } from '$lib/types';
 import {
-	calculateCrowdStats,
-	getPuzzleById,
-	getSubmission
-} from '$lib/server/services';
+	resultsQuerySchema,
+	formatValidationError,
+	createErrorResponse
+} from '$lib/server/validation';
+import { calculateCrowdStats, getPuzzleById, getSubmission } from '$lib/server/services';
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {
-		const user_id = url.searchParams.get('user_id');
-		const puzzle_id = url.searchParams.get('puzzle_id');
+		// Parse query parameters into an object for Zod validation
+		const queryParams = {
+			user_id: url.searchParams.get('user_id') ?? undefined,
+			puzzle_id: url.searchParams.get('puzzle_id') ?? undefined
+		};
 
-		// Validate user_id
-		if (!user_id || !isValidUUID(user_id)) {
-			return json(
-				{ success: false, error: 'Invalid user_id format' } as APIResponse<never>,
-				{ status: 400 }
-			);
+		// Validate with Zod
+		const parseResult = resultsQuerySchema.safeParse(queryParams);
+		if (!parseResult.success) {
+			return formatValidationError(parseResult.error);
 		}
 
-		// Validate puzzle_id
-		if (!puzzle_id || !isValidUUID(puzzle_id)) {
-			return json(
-				{ success: false, error: 'Invalid puzzle_id format' } as APIResponse<never>,
-				{ status: 400 }
-			);
-		}
+		const { user_id, puzzle_id } = parseResult.data;
 
 		// Fetch user's submission
 		const submission = await getSubmission(user_id, puzzle_id);
 		if (!submission) {
-			return json(
-				{
-					success: false,
-					error: 'No submission found. Play today\'s puzzle first!'
-				} as APIResponse<never>,
-				{ status: 404 }
-			);
+			return createErrorResponse("No submission found. Play today's puzzle first!", 404);
 		}
 
 		// Fetch puzzle
 		const puzzle = await getPuzzleById(puzzle_id);
 		if (!puzzle) {
-			return json(
-				{ success: false, error: 'Puzzle not found' } as APIResponse<never>,
-				{ status: 404 }
-			);
+			return createErrorResponse('Puzzle not found', 404);
 		}
 
 		// Calculate crowd stats
@@ -87,12 +74,6 @@ export const GET: RequestHandler = async ({ url }) => {
 		} as APIResponse<Results>);
 	} catch (error) {
 		console.error('Error fetching results:', error);
-		return json(
-			{
-				success: false,
-				error: 'Server error. Please try again.'
-			} as APIResponse<never>,
-			{ status: 500 }
-		);
+		return createErrorResponse('Server error. Please try again.', 500);
 	}
 };
