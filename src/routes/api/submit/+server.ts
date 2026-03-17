@@ -1,23 +1,22 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { supabaseAdmin } from '$lib/supabaseClient';
 import { isValidUUID, generateShareText } from '$lib/utils';
-import type { APIResponse, DBPuzzle, CrowdStat, DBSubmission, Results } from '$lib/types';
+import type { APIResponse, Results } from '$lib/types';
+import { DRAFT_SIZE } from '$lib/config/constants';
 import {
-	DRAFT_SIZE,
-	CAPTAIN_BONUS,
-	TOP_RANK,
-	TOP_N,
-	PERCENTAGE_PRECISION_MULTIPLIER,
-	PERCENTAGE_PRECISION_DIVISOR
-} from '$lib/config/constants';
+	calculateScore,
+	calculateCrowdStats,
+	getPuzzleById,
+	hasSubmitted,
+	createSubmission
+} from '$lib/server/services';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const body = await request.json();
 		const { user_id, puzzle_id, drafted_items, captain } = body;
 
-		// Validate user_id and puzzle_id
+		// Validate user_id
 		if (!user_id || !isValidUUID(user_id)) {
 			return json(
 				{ success: false, error: 'Invalid user_id format' } as APIResponse<never>,
@@ -25,6 +24,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
+		// Validate puzzle_id
 		if (!puzzle_id || !isValidUUID(puzzle_id)) {
 			return json(
 				{ success: false, error: 'Invalid puzzle_id format' } as APIResponse<never>,
@@ -44,7 +44,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
-		// Validate captain (user's #1 guess)
+		// Validate captain
 		if (!captain || !drafted_items.includes(captain)) {
 			return json(
 				{
@@ -55,24 +55,17 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
-		// Fetch puzzle with true_rankings and sources
-		const { data: puzzleData, error: puzzleError } = await supabaseAdmin
-			.from('puzzles')
-			.select('*')
-			.eq('id', puzzle_id)
-			.single();
-
-		if (puzzleError || !puzzleData) {
+		// Fetch puzzle
+		const puzzle = await getPuzzleById(puzzle_id);
+		if (!puzzle) {
 			return json(
 				{ success: false, error: 'Puzzle not found' } as APIResponse<never>,
 				{ status: 404 }
 			);
 		}
 
-		const puzzle = puzzleData as unknown as DBPuzzle;
-
-		// Verify all selected items exist in puzzle items
-		const validItems = drafted_items.every((item) => puzzle.items.includes(item));
+		// Verify all selected items exist in puzzle
+		const validItems = drafted_items.every((item: string) => puzzle.items.includes(item));
 		if (!validItems) {
 			return json(
 				{ success: false, error: 'Invalid items selected' } as APIResponse<never>,
@@ -81,14 +74,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Check for duplicate submission
-		const { data: existingSubmission } = await supabaseAdmin
-			.from('submissions')
-			.select('id')
-			.eq('user_id', user_id)
-			.eq('puzzle_id', puzzle_id)
-			.single();
-
-		if (existingSubmission) {
+		const alreadySubmitted = await hasSubmitted(user_id, puzzle_id);
+		if (alreadySubmitted) {
 			return json(
 				{
 					success: false,
@@ -99,37 +86,21 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Calculate score
-		const trueRankings = puzzle.true_rankings as Record<string, number>;
-		const trueTop5 = Object.entries(trueRankings)
-			.filter(([_, rank]) => rank <= TOP_N)
-			.map(([item, _]) => item);
-
-		const baseScore = drafted_items.filter((item) => trueTop5.includes(item)).length;
-		const captainBonus = trueRankings[captain] === TOP_RANK ? CAPTAIN_BONUS : 0;
-		const totalScore = baseScore + captainBonus;
+		const trueRankings = puzzle.true_rankings;
+		const score = calculateScore(drafted_items, captain, trueRankings);
 
 		// Save submission
-		const { data: submissionData, error: submissionError } = await supabaseAdmin
-			.from('submissions')
-			.insert({
-				user_id,
-				puzzle_id,
-				drafted_items,
-				captain,
-				base_score: baseScore,
-				captain_bonus: captainBonus,
-				total_score: totalScore
-			})
-			.select()
-			.single();
+		const submissionResult = await createSubmission({
+			userId: user_id,
+			puzzleId: puzzle_id,
+			draftedItems: drafted_items,
+			captain,
+			score
+		});
 
-		if (submissionError || !submissionData) {
-			console.error('Error saving submission:', submissionError);
+		if (!submissionResult.success) {
 			return json(
-				{
-					success: false,
-					error: 'Failed to save submission. Please try again.'
-				} as APIResponse<never>,
+				{ success: false, error: submissionResult.error } as APIResponse<never>,
 				{ status: 500 }
 			);
 		}
@@ -143,35 +114,35 @@ export const POST: RequestHandler = async ({ request }) => {
 			drafted_items,
 			captain,
 			trueRankings,
-			totalScore
+			score.totalScore
 		);
 
-		// Return results with sources
+		// Build results
 		const results: Results = {
 			submission: {
 				drafted_items,
 				captain,
-				base_score: baseScore,
-				captain_bonus: captainBonus,
-				total_score: totalScore
+				base_score: score.baseScore,
+				captain_bonus: score.captainBonus,
+				total_score: score.totalScore
 			},
 			puzzle: {
 				prompt: puzzle.prompt,
 				true_rankings: trueRankings
 			},
 			crowd_stats: crowdStats,
-			sources: puzzle.sources as string[],
+			sources: puzzle.sources,
 			share_text: shareText
 		};
 
 		return json({
 			success: true,
 			data: {
-				submission_id: (submissionData as unknown as DBSubmission).id,
+				submission_id: submissionResult.submission.id,
 				score: {
-					base_score: baseScore,
-					captain_bonus: captainBonus,
-					total_score: totalScore
+					base_score: score.baseScore,
+					captain_bonus: score.captainBonus,
+					total_score: score.totalScore
 				},
 				results
 			}
@@ -187,45 +158,3 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 	}
 };
-
-async function calculateCrowdStats(
-	puzzleId: string,
-	allItems: string[],
-	trueRankings: Record<string, number>
-): Promise<CrowdStat[]> {
-	const { data: submissions, error } = await supabaseAdmin
-		.from('submissions')
-		.select('drafted_items, captain')
-		.eq('puzzle_id', puzzleId);
-
-	if (error || !submissions || submissions.length === 0) {
-		return allItems.map((item) => ({
-			item_name: item,
-			rank: trueRankings[item],
-			drafted_percentage: 0,
-			captained_percentage: 0
-		}));
-	}
-
-	const totalUsers = submissions.length;
-	const stats: CrowdStat[] = allItems.map((item) => {
-		let draftedCount = 0;
-		let captainedCount = 0;
-
-		for (const submission of submissions) {
-			const sub = submission as unknown as { drafted_items: string[]; captain: string };
-			if (sub.drafted_items.includes(item)) draftedCount++;
-			if (sub.captain === item) captainedCount++;
-		}
-
-		return {
-			item_name: item,
-			rank: trueRankings[item],
-			drafted_percentage: Math.round((draftedCount / totalUsers) * PERCENTAGE_PRECISION_MULTIPLIER) / PERCENTAGE_PRECISION_DIVISOR,
-			captained_percentage: Math.round((captainedCount / totalUsers) * PERCENTAGE_PRECISION_MULTIPLIER) / PERCENTAGE_PRECISION_DIVISOR
-		};
-	});
-
-	stats.sort((a, b) => a.rank - b.rank);
-	return stats;
-}

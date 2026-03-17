@@ -1,8 +1,12 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { supabaseAdmin } from '$lib/supabaseClient';
-import { isValidUUID, getUserLocalDate, seededShuffle } from '$lib/utils';
-import type { APIResponse, Puzzle, DBPuzzle } from '$lib/types';
+import { isValidUUID } from '$lib/utils';
+import type { APIResponse, Puzzle } from '$lib/types';
+import {
+	getPuzzle,
+	toApiPuzzle,
+	hasSubmitted
+} from '$lib/server/services';
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {
@@ -20,73 +24,49 @@ export const GET: RequestHandler = async ({ url }) => {
 			);
 		}
 
-		let puzzleQuery = supabaseAdmin
-			.from('puzzles')
-			.select('id, puzzle_number, daily_date, prompt, items');
+		// Validate puzzle_id if provided
+		if (puzzle_id && !isValidUUID(puzzle_id)) {
+			return json(
+				{ success: false, error: 'Invalid puzzle_id format' } as APIResponse<never>,
+				{ status: 400 }
+			);
+		}
 
-		// Support archive mode: fetch by puzzle_id, puzzle_number, or date
-		if (puzzle_id) {
-			if (!isValidUUID(puzzle_id)) {
-				return json(
-					{ success: false, error: 'Invalid puzzle_id format' } as APIResponse<never>,
-					{ status: 400 }
-				);
-			}
-			puzzleQuery = puzzleQuery.eq('id', puzzle_id);
-		} else if (puzzle_number) {
-			// Fetch puzzle by puzzle number
-			const puzzleNum = parseInt(puzzle_number);
-			if (isNaN(puzzleNum)) {
+		// Validate puzzle_number if provided
+		let parsedPuzzleNumber: number | undefined;
+		if (puzzle_number) {
+			parsedPuzzleNumber = parseInt(puzzle_number);
+			if (isNaN(parsedPuzzleNumber)) {
 				return json(
 					{ success: false, error: 'Invalid puzzle_number format' } as APIResponse<never>,
 					{ status: 400 }
 				);
 			}
-			puzzleQuery = puzzleQuery.eq('puzzle_number', puzzleNum);
-		} else if (date) {
-			// Fetch puzzle for specific date
-			puzzleQuery = puzzleQuery.eq('daily_date', date);
-		} else {
-			// Default: fetch today's puzzle based on user's timezone
-			const timezoneOffset = timezone ? parseInt(timezone) : undefined;
-			const userLocalDate = getUserLocalDate(timezoneOffset);
-			puzzleQuery = puzzleQuery.eq('daily_date', userLocalDate);
 		}
 
-		const { data: puzzleData, error: puzzleError } = await puzzleQuery.single();
+		// Parse timezone offset
+		const timezoneOffset = timezone ? parseInt(timezone) : undefined;
 
-		if (puzzleError || !puzzleData) {
+		// Fetch puzzle using service
+		const dbPuzzle = await getPuzzle({
+			puzzleId: puzzle_id ?? undefined,
+			puzzleNumber: parsedPuzzleNumber,
+			date: date ?? undefined,
+			timezoneOffset
+		});
+
+		if (!dbPuzzle) {
 			return json(
 				{ success: false, error: 'No puzzle available yet. Check back soon!' } as APIResponse<never>,
 				{ status: 404 }
 			);
 		}
 
-		const dbPuzzle = puzzleData as unknown as DBPuzzle;
+		// Check if user has already submitted
+		const has_submitted = await hasSubmitted(user_id, dbPuzzle.id);
 
-		// Shuffle items using user_id + puzzle_id as seed for consistency
-		const seed = `${user_id}_${dbPuzzle.id}`;
-		const shuffledItems = seededShuffle(dbPuzzle.items, seed);
-
-		// Check if user has already submitted for this puzzle
-		const { data: submissionData } = await supabaseAdmin
-			.from('submissions')
-			.select('id')
-			.eq('user_id', user_id)
-			.eq('puzzle_id', dbPuzzle.id)
-			.single();
-
-		const has_submitted = !!submissionData;
-
-		// Return puzzle WITHOUT true_rankings (security)
-		const puzzle: Puzzle = {
-			id: dbPuzzle.id,
-			puzzle_number: dbPuzzle.puzzle_number,
-			daily_date: dbPuzzle.daily_date,
-			prompt: dbPuzzle.prompt,
-			items: shuffledItems,
-			has_submitted
-		};
+		// Transform to API-safe puzzle (removes true_rankings, shuffles items)
+		const puzzle: Puzzle = toApiPuzzle(dbPuzzle, user_id, has_submitted);
 
 		return json({
 			success: true,

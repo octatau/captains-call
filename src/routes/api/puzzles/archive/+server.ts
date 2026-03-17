@@ -1,8 +1,12 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { supabaseAdmin } from '$lib/supabaseClient';
 import { isValidUUID } from '$lib/utils';
-import type { APIResponse, ArchivePuzzle, ArchiveListResponse } from '$lib/types';
+import type { APIResponse, ArchiveListResponse } from '$lib/types';
+import {
+	getArchivePuzzles,
+	buildArchiveList,
+	getUserSubmissionsForPuzzles
+} from '$lib/server/services';
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {
@@ -16,21 +20,16 @@ export const GET: RequestHandler = async ({ url }) => {
 			);
 		}
 
-		// Fetch all puzzles ordered by date (newest first)
-		const { data: puzzlesData, error: puzzlesError } = await supabaseAdmin
-			.from('puzzles')
-			.select('id, puzzle_number, daily_date, prompt')
-			.order('daily_date', { ascending: false });
-
-		if (puzzlesError) {
-			console.error('Error fetching puzzles:', puzzlesError);
+		// Fetch all puzzles
+		const puzzles = await getArchivePuzzles();
+		if (!puzzles) {
 			return json(
 				{ success: false, error: 'Failed to fetch puzzles' } as APIResponse<never>,
 				{ status: 500 }
 			);
 		}
 
-		if (!puzzlesData || puzzlesData.length === 0) {
+		if (puzzles.length === 0) {
 			return json({
 				success: true,
 				data: {
@@ -40,39 +39,12 @@ export const GET: RequestHandler = async ({ url }) => {
 			} as APIResponse<ArchiveListResponse>);
 		}
 
-		// Fetch user's submissions for all these puzzles
-		const puzzleIds = puzzlesData.map((p) => p.id);
-		const { data: submissionsData } = await supabaseAdmin
-			.from('submissions')
-			.select('puzzle_id, total_score, submitted_at')
-			.eq('user_id', user_id)
-			.in('puzzle_id', puzzleIds);
-
-		// Create a map of puzzle_id to submission data
-		const submissionsMap = new Map();
-		if (submissionsData) {
-			submissionsData.forEach((sub) => {
-				submissionsMap.set(sub.puzzle_id, {
-					total_score: sub.total_score,
-					submitted_at: sub.submitted_at
-				});
-			});
-		}
+		// Fetch user's submissions for all puzzles
+		const puzzleIds = puzzles.map((p) => p.id);
+		const submissionsMap = await getUserSubmissionsForPuzzles(user_id, puzzleIds);
 
 		// Build archive list with completion status
-		const archivePuzzles: ArchivePuzzle[] = puzzlesData.map((puzzle) => {
-			const submission = submissionsMap.get(puzzle.id);
-
-			return {
-				id: puzzle.id,
-				puzzle_number: puzzle.puzzle_number,
-				daily_date: puzzle.daily_date,
-				prompt: puzzle.prompt,
-				has_submitted: !!submission,
-				submitted_at: submission?.submitted_at,
-				total_score: submission?.total_score
-			};
-		});
+		const archivePuzzles = buildArchiveList(puzzles, submissionsMap);
 
 		return json({
 			success: true,
