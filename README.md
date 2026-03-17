@@ -1,53 +1,34 @@
 # Topick
 
-> Guess the Rankings
+A daily puzzle game where you guess which 5 items are in the top 5 of a ranked list.
 
-A daily ranking game where you guess which 5 items are in the top 5 based on real-world data, guess which one is #1, and compete for the perfect 8/8 score.
+## What it does
 
-## Features
+Topick presents you with 10 items from a data-backed ranking (e.g., "Top 10 Programming Languages by GitHub Stars"). Your goal is to identify which 5 are actually in the top 5, then guess which one is ranked #1. Scoring is simple: 1 point per correct top-5 pick, plus a 3-point bonus for correctly guessing #1. A perfect game is 8/8.
 
-- **Daily Puzzles** with data-backed rankings and cited sources
-- **Archive Mode** to play past puzzles you missed
-- **3-Layer Results Reveal** with scoring, rankings, and crowd statistics
-- **Dark Mode** with system preference detection
-- **Mobile Responsive** design with Tailwind CSS
-- **Secure Scoring** - all validation happens server-side
+New puzzles are released daily. Missed one? Play past puzzles in the archive.
 
-## Tech Stack
+## Requirements
 
-- **Frontend**: SvelteKit (Svelte 5) + Tailwind CSS
-- **Backend**: Supabase (PostgreSQL + API)
-- **Deployment**: Vercel/Netlify (frontend) + Supabase (backend)
+- Node.js 18+
+- pnpm (or npm/yarn)
+- A Supabase project (free tier works)
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18+
-- A Supabase account (free tier works great)
-
-### 1. Clone and Install
-
 ```bash
+# Clone the repository
 git clone <your-repo-url>
 cd topick
-npm install
-```
 
-### 2. Set Up Supabase
+# Install dependencies
+pnpm install
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. In your Supabase dashboard, go to **SQL Editor**
-3. Run the migration: `supabase/migrations/001_initial_schema.sql`
-4. (Optional) Insert sample puzzles: `supabase/sample_puzzles.sql`
-
-### 3. Configure Environment
-
-```bash
+# Copy environment template
 cp .env.example .env
 ```
 
-Edit `.env` with your Supabase credentials:
+Edit `.env` with your Supabase credentials (from Supabase Dashboard > Project Settings > API):
 
 ```env
 PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -55,90 +36,72 @@ PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-Get these from: **Supabase Dashboard → Project Settings → API**
+Set up the database:
+1. Go to your Supabase SQL Editor
+2. Run `supabase/migrations/001_initial_schema.sql`
+3. (Optional) Add sample puzzles: `supabase/sample_puzzles.sql`
 
-### 4. Run Development Server
+Start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-Visit [http://localhost:5173](http://localhost:5173)
+Open [http://localhost:5173](http://localhost:5173)
 
-## How to Play
+## Usage
 
-1. **Which 5 are in the top 5?**: Click to select the 5 items you think are in the actual top 5
-2. **Which one is #1?**: Click one of your selected items to guess which one is ranked #1
-3. **Submit**: Get your score!
-   - **Top 5 Score**: +1 for each correct guess (max 5 points)
-   - **#1 Bonus**: +3 if you correctly guess the #1 ranked item (else 0 points)
-   - **Total**: 0-8 points (8/8 = perfect game)
+**Playing the daily puzzle:**
+1. Select 5 items you think are in the actual top 5
+2. Click one of your selections to mark it as your #1 guess (the captain)
+3. Submit and see your score
 
-## Creating Puzzles
+**Scoring:**
+- +1 point for each correct top-5 pick (max 5)
+- +3 bonus points if your captain is actually #1
+- Perfect score: 8/8
 
-Add new daily puzzles via Supabase SQL Editor:
+**Sharing results:**
+After submitting, share your score as an image or copy the text to clipboard. Results are spoiler-free.
 
-```sql
-INSERT INTO puzzles (puzzle_number, daily_date, prompt, items, true_rankings, sources)
-VALUES (
-    8,
-    '2026-01-08',
-    'Top 10 Programming Languages by GitHub Stars (2024)',
-    '["JavaScript", "Python", "Java", ...]'::jsonb,
-    '{"JavaScript": 1, "Python": 2, ...}'::jsonb,
-    '["https://github.com/search", "Data as of Jan 2024"]'::jsonb
-);
+**Archive:**
+Access past puzzles from the Archive tab.
+
+## Configuration
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `PUBLIC_SUPABASE_URL` | Yes | Your Supabase project URL |
+| `PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon/public key (safe for browser) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key (server-side only) |
+
+## Development
+
+```bash
+# Run tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Type check
+pnpm check
+
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
 ```
 
-**Requirements**:
-- Exactly 10 items
-- Rankings 1-10 (no duplicates)
-- Specific, data-backed prompts (not opinion-based)
-- Include source citations
+## Deployment (Netlify)
 
-## Deployment
-
-### Deploy to Vercel
-
-1. Push to GitHub
-2. Import on [vercel.com](https://vercel.com)
-3. Add environment variables (see `.env.example`)
-4. Deploy!
-
-### Deploy to Netlify
-
-1. Push to GitHub
-2. Import on [netlify.com](https://netlify.com)
-3. Build settings:
-   - Build command: `npm run build`
+1. Push your repository to GitHub
+2. Import the project on [netlify.com](https://netlify.com)
+3. Build settings are auto-detected from `netlify.toml`:
+   - Build command: `pnpm run build`
    - Publish directory: `build`
-4. Add environment variables
-5. Deploy!
+4. Add environment variables in Netlify dashboard
+5. Deploy
 
-## Project Structure
-
-```
-src/
-├── lib/
-│   ├── components/       # Svelte components
-│   ├── types.ts         # TypeScript types
-│   ├── utils.ts         # Helper functions
-│   └── supabaseClient.ts # Database client
-├── routes/
-│   ├── api/             # API endpoints
-│   │   ├── puzzle/      # GET daily/archive puzzle
-│   │   ├── puzzles/archive/ # GET all puzzles
-│   │   ├── submit/      # POST submission
-│   │   └── results/     # GET results
-│   ├── +layout.svelte   # Root layout (dark mode)
-│   └── +page.svelte     # Main page (tabs)
-└── app.css              # Tailwind styles
-
-supabase/
-├── migrations/          # Database schema
-└── sample_puzzles.sql  # Test data
-```
-
-## License
-
-MIT
+The project includes in-memory rate limiting (10 requests/minute per IP) on the submission endpoint.
