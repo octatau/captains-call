@@ -18,6 +18,7 @@
 		"@sveltejs/adapter-netlify": "^5.2.4",
 		"@sveltejs/kit": "^2.49.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
+		"@vitest/coverage-v8": "^3.2.4",
 		"autoprefixer": "^10.4.23",
 		"postcss": "^8.5.6",
 		"svelte": "^5.45.6",
