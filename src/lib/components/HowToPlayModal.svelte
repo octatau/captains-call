@@ -14,12 +14,26 @@
 			onClose();
 		}
 	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape') {
+			onClose();
+		}
+	}
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 <!-- Modal Backdrop -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	onclick={handleBackdropClick}
 	class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fadeIn"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="how-to-play-title"
+	tabindex="-1"
 >
 	<!-- Modal Content -->
 	<div
@@ -27,6 +41,7 @@
 	>
 		<!-- Close Button -->
 		<button
+			type="button"
 			onclick={onClose}
 			class="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10"
 			aria-label="Close"
@@ -38,7 +53,7 @@
 		<div class="overflow-y-auto flex-1 p-4 sm:p-6">
 			<!-- Header -->
 			<div class="mb-4 sm:mb-6">
-				<h2 class="text-xl sm:text-2xl font-bold {theme.neutral.textStrong} mb-2">How to Play</h2>
+				<h2 id="how-to-play-title" class="text-xl sm:text-2xl font-bold {theme.neutral.textStrong} mb-2">How to Play</h2>
 				<p class="text-sm {theme.neutral.text}">
 					Daily ranking game - can you guess the top 5?
 				</p>
@@ -112,6 +127,7 @@
 		<!-- Sticky Close Button -->
 		<div class="border-t {theme.neutral.border} p-4 sm:p-6 bg-white dark:bg-gray-800">
 			<button
+				type="button"
 				onclick={onClose}
 				class="w-full px-6 py-3 bg-pearl-aqua-600 hover:bg-pearl-aqua-700 dark:bg-pearl-aqua-500 dark:hover:bg-pearl-aqua-600 text-white font-semibold rounded-lg transition-colors"
 			>

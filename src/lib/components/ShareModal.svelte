@@ -84,6 +84,12 @@
 		}
 	}
 
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape') {
+			onClose();
+		}
+	}
+
 	async function handleDownloadImage() {
 		if (!shareCardElement) return;
 
@@ -170,10 +176,18 @@
 	}
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 <!-- Modal Backdrop -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	onclick={handleBackdropClick}
 	class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fadeIn"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="share-modal-title"
+	tabindex="-1"
 >
 	<!-- Modal Content -->
 	<div
@@ -181,6 +195,7 @@
 	>
 		<!-- Close Button -->
 		<button
+			type="button"
 			onclick={onClose}
 			class="sticky top-4 right-4 float-right p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10 bg-white dark:bg-gray-800"
 			aria-label="Close"
@@ -191,7 +206,7 @@
 		<div class="p-4 sm:p-6">
 		<!-- Header -->
 		<div class="mb-4 sm:mb-6">
-			<h2 class="text-xl sm:text-2xl font-bold {theme.neutral.textStrong} mb-2">Share Your Results</h2>
+			<h2 id="share-modal-title" class="text-xl sm:text-2xl font-bold {theme.neutral.textStrong} mb-2">Share Your Results</h2>
 			<div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 sm:p-4 {theme.neutral.text} text-sm sm:text-base whitespace-pre-line">
 				{shareText}
 			</div>
@@ -203,6 +218,7 @@
 			<div class="grid grid-cols-2 gap-3">
 				<!-- Download Image -->
 				<button
+					type="button"
 					onclick={handleDownloadImage}
 					disabled={generatingImage}
 					class="flex items-center justify-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg {theme.primary.bg} hover:bg-pearl-aqua-700 dark:hover:bg-pearl-aqua-600 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -218,6 +234,7 @@
 				<!-- Share Image (Native) -->
 				{#if navigator.share}
 					<button
+						type="button"
 						onclick={handleShareImage}
 						disabled={generatingImage}
 						class="flex items-center justify-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg {theme.primary.bg} hover:bg-pearl-aqua-700 dark:hover:bg-pearl-aqua-600 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -232,6 +249,7 @@
 				{:else}
 					<!-- Copy Image -->
 					<button
+						type="button"
 						onclick={handleCopyImage}
 						disabled={generatingImage}
 						class="flex items-center justify-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg {theme.primary.bg} hover:bg-pearl-aqua-700 dark:hover:bg-pearl-aqua-600 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -255,6 +273,7 @@
 			<p class="text-xs {theme.neutral.text} mb-2 sm:mb-3">Click a platform below - the image will be copied to your clipboard, then paste it in your post!</p>
 			<!-- Copy to Clipboard -->
 			<button
+				type="button"
 				onclick={copyToClipboard}
 				class="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border-2 {theme.neutral.border} hover:border-pearl-aqua-500 dark:hover:border-pearl-aqua-400 transition-all {theme.card.bg}"
 			>
@@ -267,6 +286,7 @@
 			<!-- Native Share (Mobile) -->
 			{#if navigator.share}
 				<button
+					type="button"
 					onclick={useNativeShare}
 					class="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border-2 {theme.neutral.border} hover:border-pearl-aqua-500 dark:hover:border-pearl-aqua-400 transition-all {theme.card.bg}"
 				>
@@ -279,6 +299,7 @@
 			<div class="grid grid-cols-2 gap-2 sm:gap-3">
 				<!-- Twitter/X -->
 				<button
+					type="button"
 					onclick={shareOnTwitter}
 					class="flex items-center justify-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg bg-black hover:bg-gray-800 text-white transition-colors"
 				>
@@ -290,6 +311,7 @@
 
 				<!-- Facebook -->
 				<button
+					type="button"
 					onclick={shareOnFacebook}
 					class="flex items-center justify-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg bg-[#1877F2] hover:bg-[#166FE5] text-white transition-colors"
 				>
@@ -301,6 +323,7 @@
 
 				<!-- LinkedIn -->
 				<button
+					type="button"
 					onclick={shareOnLinkedIn}
 					class="flex items-center justify-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg bg-[#0A66C2] hover:bg-[#095196] text-white transition-colors"
 				>
@@ -312,6 +335,7 @@
 
 				<!-- Reddit -->
 				<button
+					type="button"
 					onclick={shareOnReddit}
 					class="flex items-center justify-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg bg-[#FF4500] hover:bg-[#E03D00] text-white transition-colors"
 				>
@@ -324,6 +348,7 @@
 
 			<!-- Email -->
 			<button
+				type="button"
 				onclick={shareViaEmail}
 				class="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border-2 {theme.neutral.border} hover:border-pearl-aqua-500 dark:hover:border-pearl-aqua-400 transition-all {theme.card.bg}"
 			>

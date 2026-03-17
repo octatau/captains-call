@@ -115,7 +115,7 @@
 			<!-- The Actual Top 5 -->
 			<div class="{theme.card.bg} rounded-lg border {theme.card.border} p-6">
 				<h4 class="text-lg font-bold {theme.neutral.textStrong} mb-4 flex items-center gap-2">
-					<Icon src={Check} mini size="20" class="{theme.primary.text}" />
+					<Icon src={Check} mini size="20" class={theme.primary.text} />
 					The Actual Top 5
 				</h4>
 				<div class="space-y-2">

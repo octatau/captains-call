@@ -31,6 +31,13 @@
 		}
 	}
 
+	function handleItemKeydown(event: KeyboardEvent, item: string) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault();
+			handleItemClick(item);
+		}
+	}
+
 	function handleRemoveItem(item: string) {
 		draftedItems = draftedItems.filter((i) => i !== item);
 		if (captain === item) {
@@ -61,6 +68,7 @@
 		<div class="flex justify-center items-center mb-2 relative">
 			<p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Topick #{puzzle.puzzle_number}</p>
 			<button
+				type="button"
 				onclick={() => showHowToPlay = true}
 				class="absolute right-0 flex items-center gap-1 px-2 py-1 text-xs sm:text-sm text-pearl-aqua-600 dark:text-pearl-aqua-400 hover:bg-pearl-aqua-50 dark:hover:bg-pearl-aqua-900/20 rounded-lg transition-colors"
 			>
@@ -84,18 +92,24 @@
 				{@const isDisabled = !isDrafted && draftedItems.length >= DRAFT_SIZE}
 
 				<div
-					class="relative w-full px-4 py-3 rounded-lg border-2 transition-all {isDrafted
+					role="button"
+					tabindex={isDisabled && !isDrafted ? -1 : 0}
+					aria-pressed={isDrafted}
+					aria-disabled={isDisabled && !isDrafted}
+					class="relative w-full px-4 py-3 rounded-lg border-2 transition-all text-left {isDrafted
 						? 'border-pearl-aqua-600 dark:border-pearl-aqua-500 bg-pearl-aqua-50 dark:bg-pearl-aqua-900/50'
 						: isDisabled
 							? 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 opacity-50 cursor-not-allowed'
 							: 'border-gray-300 dark:border-gray-600 hover:border-pearl-aqua-400 dark:hover:border-pearl-aqua-500 bg-white dark:bg-gray-700 cursor-pointer'}"
-					onclick={() => !isDrafted && handleItemClick(item)}
+					onclick={() => !isDrafted && !isDisabled && handleItemClick(item)}
+					onkeydown={(e) => !isDrafted && !isDisabled && handleItemKeydown(e, item)}
 				>
 					<div class="flex items-center justify-between gap-3">
 						<span class="font-medium text-gray-900 dark:text-white">{item}</span>
 						{#if isDrafted}
 							<div class="flex items-center gap-2">
 								<button
+									type="button"
 									onclick={(e) => {
 										e.stopPropagation();
 										handleToggleCaptain(item);
@@ -108,6 +122,7 @@
 									<Icon src={Star} mini size="16" />
 								</button>
 								<button
+									type="button"
 									onclick={(e) => {
 										e.stopPropagation();
 										handleRemoveItem(item);
@@ -139,6 +154,7 @@
 					{/if}
 				</div>
 				<button
+					type="button"
 					onclick={handleSubmit}
 					disabled={!canSubmit}
 					class="w-full sm:w-auto px-6 py-3 font-semibold rounded-lg transition-colors {canSubmit
