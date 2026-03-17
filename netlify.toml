@@ -1,3 +1,8 @@
 [build]
-  command = "npm run build"
+  command = "pnpm run build"
   publish = "build"
+
+# Note: Rate limiting is implemented at the application level in /api/submit
+# using in-memory rate limiting (10 requests/minute per IP).
+# This is sufficient for a casual daily game with low abuse incentive.
+# For stricter requirements, consider Upstash Redis for distributed state.
