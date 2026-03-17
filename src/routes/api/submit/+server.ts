@@ -14,9 +14,30 @@ import {
 	hasSubmitted,
 	createSubmission
 } from '$lib/server/services';
+import { checkRateLimit, getClientIp, SUBMIT_RATE_LIMIT } from '$lib/server/ratelimit';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
+		// Rate limiting - check before any other processing
+		const clientIp = getClientIp(request);
+		const rateLimitResult = checkRateLimit(clientIp, SUBMIT_RATE_LIMIT);
+
+		if (!rateLimitResult.allowed) {
+			const retryAfter = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+			return json(
+				{
+					success: false,
+					error: 'Too many requests. Please try again later.'
+				},
+				{
+					status: 429,
+					headers: {
+						'Retry-After': String(retryAfter)
+					}
+				}
+			);
+		}
+
 		const body = await request.json();
 
 		// Validate request body with Zod
