@@ -3,6 +3,14 @@ import type { RequestHandler } from './$types';
 import { supabaseAdmin } from '$lib/supabaseClient';
 import { isValidUUID, generateShareText } from '$lib/utils';
 import type { APIResponse, DBPuzzle, CrowdStat, DBSubmission, Results } from '$lib/types';
+import {
+	DRAFT_SIZE,
+	CAPTAIN_BONUS,
+	TOP_RANK,
+	TOP_N,
+	PERCENTAGE_PRECISION_MULTIPLIER,
+	PERCENTAGE_PRECISION_DIVISOR
+} from '$lib/config/constants';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -27,11 +35,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Validate drafted_items
 		if (
 			!Array.isArray(drafted_items) ||
-			drafted_items.length !== 5 ||
-			new Set(drafted_items).size !== 5
+			drafted_items.length !== DRAFT_SIZE ||
+			new Set(drafted_items).size !== DRAFT_SIZE
 		) {
 			return json(
-				{ success: false, error: 'Must select exactly 5 unique items' } as APIResponse<never>,
+				{ success: false, error: `Must select exactly ${DRAFT_SIZE} unique items` } as APIResponse<never>,
 				{ status: 400 }
 			);
 		}
@@ -93,11 +101,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Calculate score
 		const trueRankings = puzzle.true_rankings as Record<string, number>;
 		const trueTop5 = Object.entries(trueRankings)
-			.filter(([_, rank]) => rank <= 5)
+			.filter(([_, rank]) => rank <= TOP_N)
 			.map(([item, _]) => item);
 
 		const baseScore = drafted_items.filter((item) => trueTop5.includes(item)).length;
-		const captainBonus = trueRankings[captain] === 1 ? 3 : 0;
+		const captainBonus = trueRankings[captain] === TOP_RANK ? CAPTAIN_BONUS : 0;
 		const totalScore = baseScore + captainBonus;
 
 		// Save submission
@@ -213,8 +221,8 @@ async function calculateCrowdStats(
 		return {
 			item_name: item,
 			rank: trueRankings[item],
-			drafted_percentage: Math.round((draftedCount / totalUsers) * 1000) / 10,
-			captained_percentage: Math.round((captainedCount / totalUsers) * 1000) / 10
+			drafted_percentage: Math.round((draftedCount / totalUsers) * PERCENTAGE_PRECISION_MULTIPLIER) / PERCENTAGE_PRECISION_DIVISOR,
+			captained_percentage: Math.round((captainedCount / totalUsers) * PERCENTAGE_PRECISION_MULTIPLIER) / PERCENTAGE_PRECISION_DIVISOR
 		};
 	});
 

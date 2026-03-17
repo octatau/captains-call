@@ -1,5 +1,7 @@
 // Utility functions for Topick
 
+import { TOP_N, TOP_RANK, MAX_TOTAL_SCORE } from '$lib/config/constants';
+
 const STORAGE_KEY = 'topick_user_id';
 
 /**
@@ -144,24 +146,24 @@ export function generateShareText(
 	trueRankings: Record<string, number>,
 	totalScore: number
 ): string {
-	// Get true top 5 in order
-	const trueTop5 = Object.entries(trueRankings)
-		.filter(([_, rank]) => rank <= 5)
+	// Get true top N in order
+	const trueTopN = Object.entries(trueRankings)
+		.filter(([_, rank]) => rank <= TOP_N)
 		.sort((a, b) => a[1] - b[1])
 		.map(([item, _]) => item);
 
 	// Count correct predictions
-	const correctCount = trueTop5.filter((item) => draftedItems.includes(item)).length;
+	const correctCount = trueTopN.filter((item) => draftedItems.includes(item)).length;
 
 	// Check #1 prediction
-	const nailedTheOne = trueRankings[captain] === 1;
+	const nailedTheOne = trueRankings[captain] === TOP_RANK;
 
 	// Build share text with better formatting and icons
 	const lines = [
 		`🎯 Topick #${puzzleNumber}`,
 		'',
-		`🏆 Score: ${totalScore}/8`,
-		`✓ Top 5: ${correctCount}/5`,
+		`🏆 Score: ${totalScore}/${MAX_TOTAL_SCORE}`,
+		`✓ Top ${TOP_N}: ${correctCount}/${TOP_N}`,
 		`⭐ #1 Pick: ${nailedTheOne ? '✓ Correct!' : '✗ Missed'}`,
 		'',
 		'Play today at Topickal!'

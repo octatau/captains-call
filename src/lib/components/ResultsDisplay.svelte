@@ -5,6 +5,15 @@
 	import { Icon, Check, XMark, Star, BookOpen, Share } from 'svelte-hero-icons';
 	import { theme } from '$lib/theme';
 	import ShareModal from './ShareModal.svelte';
+	import {
+		TOP_N,
+		TOP_RANK,
+		MAX_TOTAL_SCORE,
+		CAPTAIN_BONUS,
+		REVEAL_DELAY_RANKINGS,
+		REVEAL_DELAY_STATS,
+		COUNTDOWN_INTERVAL
+	} from '$lib/config/constants';
 
 	interface Props {
 		puzzle: Puzzle;
@@ -22,21 +31,21 @@
 		// Layer 1: Score summary (immediate)
 		revealLayer = 1;
 
-		// Layer 2: True rankings (after 300ms)
+		// Layer 2: True rankings
 		setTimeout(() => {
 			revealLayer = 2;
-		}, 300);
+		}, REVEAL_DELAY_RANKINGS);
 
-		// Layer 3: Crowd stats and sources (after 1800ms total)
+		// Layer 3: Crowd stats and sources
 		setTimeout(() => {
 			revealLayer = 3;
-		}, 1800);
+		}, REVEAL_DELAY_STATS);
 
 		// Update countdown timer
 		nextPuzzleTime = calculateTimeUntilNextPuzzle();
 		interval = setInterval(() => {
 			nextPuzzleTime = calculateTimeUntilNextPuzzle();
-		}, 1000);
+		}, COUNTDOWN_INTERVAL);
 
 		return () => {
 			if (interval) clearInterval(interval);
@@ -45,11 +54,11 @@
 
 	const trueTop5 = $derived(
 		Object.entries(results.puzzle.true_rankings)
-			.filter(([_, rank]) => rank <= 5)
+			.filter(([_, rank]) => rank <= TOP_N)
 			.sort((a, b) => a[1] - b[1])
 	);
 
-	const captainCorrect = $derived(results.puzzle.true_rankings[results.submission.captain] === 1);
+	const captainCorrect = $derived(results.puzzle.true_rankings[results.submission.captain] === TOP_RANK);
 
 	function handleShare() {
 		showShareModal = true;
@@ -73,17 +82,17 @@
 		<div class="bg-pearl-aqua-600 dark:bg-pearl-aqua-500 text-white rounded-lg p-8 shadow-xl animate-fadeIn mb-6">
 			<div class="text-center">
 				<p class="text-sm uppercase tracking-wide opacity-80 mb-2">Your Score</p>
-				<h2 class="text-6xl font-bold mb-4">{results.submission.total_score}/8</h2>
+				<h2 class="text-6xl font-bold mb-4">{results.submission.total_score}/{MAX_TOTAL_SCORE}</h2>
 				<div class="flex items-center justify-center gap-6 text-lg">
 					<div class="flex items-center gap-2">
 						<Icon src={Check} mini size="20" />
-						<span>{results.submission.base_score}/5 in top 5</span>
+						<span>{results.submission.base_score}/{TOP_N} in top {TOP_N}</span>
 					</div>
 					<div class="opacity-50">•</div>
 					<div class="flex items-center gap-2">
 						{#if captainCorrect}
 							<Icon src={Star} mini size="20" />
-							<span>Nailed #1! (+3)</span>
+							<span>Nailed #1! (+{CAPTAIN_BONUS})</span>
 						{:else}
 							<Icon src={XMark} mini size="20" />
 							<span>Missed #1</span>

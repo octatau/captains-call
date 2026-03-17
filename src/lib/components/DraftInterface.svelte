@@ -3,6 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { Icon, Star, XMark, QuestionMarkCircle } from 'svelte-hero-icons';
 	import HowToPlayModal from './HowToPlayModal.svelte';
+	import { DRAFT_SIZE, MAX_BASE_SCORE, CAPTAIN_BONUS, MAX_TOTAL_SCORE } from '$lib/config/constants';
 
 	interface Props {
 		puzzle: Puzzle;
@@ -19,12 +20,12 @@
 	let captain = $state<string | null>(null);
 	let showHowToPlay = $state(false);
 
-	const canSubmit = $derived(draftedItems.length === 5 && captain !== null);
+	const canSubmit = $derived(draftedItems.length === DRAFT_SIZE && captain !== null);
 
 	function handleItemClick(item: string) {
 		const isDrafted = draftedItems.includes(item);
 
-		if (!isDrafted && draftedItems.length < 5) {
+		if (!isDrafted && draftedItems.length < DRAFT_SIZE) {
 			// Draft the item
 			draftedItems = [...draftedItems, item];
 		}
@@ -80,7 +81,7 @@
 			{#each puzzle.items as item}
 				{@const isDrafted = draftedItems.includes(item)}
 				{@const isCaptain = captain === item}
-				{@const isDisabled = !isDrafted && draftedItems.length >= 5}
+				{@const isDisabled = !isDrafted && draftedItems.length >= DRAFT_SIZE}
 
 				<div
 					class="relative w-full px-4 py-3 rounded-lg border-2 transition-all {isDrafted
@@ -132,7 +133,7 @@
 			{/if}
 			<div class="flex flex-col sm:flex-row items-center justify-between gap-3">
 				<div class="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
-					Selected: {draftedItems.length}/5
+					Selected: {draftedItems.length}/{DRAFT_SIZE}
 					{#if captain}
 						| Your #1: {captain}
 					{/if}
@@ -151,8 +152,8 @@
 	</div>
 
 	<div class="text-center text-sm text-gray-600 dark:text-gray-400">
-		<p class="mb-1"><strong>Scoring:</strong> +1 for each correct top 5 guess (max 5)</p>
-		<p>+3 bonus if you correctly guess the #1 (max 8 total)</p>
+		<p class="mb-1"><strong>Scoring:</strong> +1 for each correct top {DRAFT_SIZE} guess (max {MAX_BASE_SCORE})</p>
+		<p>+{CAPTAIN_BONUS} bonus if you correctly guess the #1 (max {MAX_TOTAL_SCORE} total)</p>
 	</div>
 </div>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Icon, XMark, Star } from 'svelte-hero-icons';
 	import { theme } from '$lib/theme';
+	import { DRAFT_SIZE, MAX_BASE_SCORE, CAPTAIN_BONUS, MAX_TOTAL_SCORE } from '$lib/config/constants';
 
 	interface Props {
 		onClose: () => void;
@@ -51,9 +52,9 @@
 						1
 					</div>
 					<div class="flex-1">
-						<h3 class="font-bold {theme.neutral.textStrong} mb-1 text-sm sm:text-base">Pick Your Top 5</h3>
+						<h3 class="font-bold {theme.neutral.textStrong} mb-1 text-sm sm:text-base">Pick Your Top {DRAFT_SIZE}</h3>
 						<p class="text-xs sm:text-sm {theme.neutral.text}">
-							Click on 5 items you think are in the actual top 5 for the given category. Your selections will be highlighted.
+							Click on {DRAFT_SIZE} items you think are in the actual top {DRAFT_SIZE} for the given category. Your selections will be highlighted.
 						</p>
 					</div>
 				</div>
@@ -84,7 +85,7 @@
 					<div class="flex-1">
 						<h3 class="font-bold {theme.neutral.textStrong} mb-1 text-sm sm:text-base">Submit & See Results</h3>
 						<p class="text-xs sm:text-sm {theme.neutral.text}">
-							Once you've selected 5 items and marked your #1, submit your guesses to see how you did!
+							Once you've selected {DRAFT_SIZE} items and marked your #1, submit your guesses to see how you did!
 						</p>
 					</div>
 				</div>
@@ -98,11 +99,11 @@
 				<div class="space-y-1.5 sm:space-y-2 text-xs sm:text-sm {theme.neutral.text}">
 					<div class="flex items-start gap-2">
 						<span class="font-bold text-pearl-aqua-700 dark:text-pearl-aqua-400">+1 point</span>
-						<span>for each item correctly in the top 5 (maximum 5 points)</span>
+						<span>for each item correctly in the top {DRAFT_SIZE} (maximum {MAX_BASE_SCORE} points)</span>
 					</div>
 					<div class="flex items-start gap-2">
-						<span class="font-bold text-jasmine-600 dark:text-jasmine-400">+3 bonus</span>
-						<span>if your #1 pick is actually ranked #1 (maximum 8 points total)</span>
+						<span class="font-bold text-jasmine-600 dark:text-jasmine-400">+{CAPTAIN_BONUS} bonus</span>
+						<span>if your #1 pick is actually ranked #1 (maximum {MAX_TOTAL_SCORE} points total)</span>
 					</div>
 				</div>
 			</div>

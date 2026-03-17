@@ -1,6 +1,13 @@
 <script lang="ts">
 	import type { Results } from '$lib/types';
 	import { Icon, Star, Check, XMark } from 'svelte-hero-icons';
+	import {
+		TOP_RANK,
+		TOP_N,
+		MAX_TOTAL_SCORE,
+		CAPTAIN_BONUS,
+		SHARE_CARD_ITEM_TRUNCATE_LENGTH
+	} from '$lib/config/constants';
 
 	interface Props {
 		results: Results;
@@ -9,12 +16,12 @@
 
 	let { results, puzzleNumber }: Props = $props();
 
-	const captainCorrect = $derived(results.puzzle.true_rankings[results.submission.captain] === 1);
+	const captainCorrect = $derived(results.puzzle.true_rankings[results.submission.captain] === TOP_RANK);
 
 	// Get true top 5 for display
 	const trueTop5 = $derived(
 		Object.entries(results.puzzle.true_rankings)
-			.filter(([_, rank]) => rank <= 5)
+			.filter(([_, rank]) => rank <= TOP_N)
 			.sort((a, b) => a[1] - b[1])
 	);
 </script>
@@ -38,12 +45,12 @@
 	<div style="background: white; border-radius: 12px; padding: 32px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
 		<div style="text-align: center; margin-bottom: 24px;">
 			<div style="font-size: 72px; font-weight: 800; color: #399388; line-height: 1; margin-bottom: 8px;">
-				{results.submission.total_score}/8
+				{results.submission.total_score}/{MAX_TOTAL_SCORE}
 			</div>
 			<div style="font-size: 18px; color: #64748b; font-weight: 500;">
-				Top 5: {results.submission.base_score}/5
+				Top {TOP_N}: {results.submission.base_score}/{TOP_N}
 				{#if captainCorrect}
-					• Nailed the #1! (+3)
+					• Nailed the #1! (+{CAPTAIN_BONUS})
 				{:else}
 					• Missed #1
 				{/if}
@@ -61,7 +68,7 @@
 						#{rank}
 					</div>
 					<div style="flex: 1; font-size: 16px; font-weight: 600; color: #0f172a;">
-						{item.length > 30 ? item.slice(0, 30) + '...' : item}
+						{item.length > SHARE_CARD_ITEM_TRUNCATE_LENGTH ? item.slice(0, SHARE_CARD_ITEM_TRUNCATE_LENGTH) + '...' : item}
 					</div>
 					<div style="display: flex; gap: 6px; align-items: center;">
 						{#if isDrafted}

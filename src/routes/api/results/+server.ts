@@ -3,6 +3,10 @@ import type { RequestHandler } from './$types';
 import { supabaseAdmin } from '$lib/supabaseClient';
 import { isValidUUID, generateShareText } from '$lib/utils';
 import type { APIResponse, DBPuzzle, CrowdStat, DBSubmission, Results } from '$lib/types';
+import {
+	PERCENTAGE_PRECISION_MULTIPLIER,
+	PERCENTAGE_PRECISION_DIVISOR
+} from '$lib/config/constants';
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {
@@ -140,8 +144,8 @@ async function calculateCrowdStats(
 		return {
 			item_name: item,
 			rank: trueRankings[item],
-			drafted_percentage: Math.round((draftedCount / totalUsers) * 1000) / 10,
-			captained_percentage: Math.round((captainedCount / totalUsers) * 1000) / 10
+			drafted_percentage: Math.round((draftedCount / totalUsers) * PERCENTAGE_PRECISION_MULTIPLIER) / PERCENTAGE_PRECISION_DIVISOR,
+			captained_percentage: Math.round((captainedCount / totalUsers) * PERCENTAGE_PRECISION_MULTIPLIER) / PERCENTAGE_PRECISION_DIVISOR
 		};
 	});
 
