@@ -5,11 +5,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { supabaseAdmin } from '$lib/supabaseClient';
+import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 import { calculateCrowdStats } from '../stats';
 
 // Mock the Supabase client
-vi.mock('$lib/supabaseClient', () => ({
+vi.mock('$lib/server/supabaseAdmin', () => ({
 	supabaseAdmin: {
 		from: vi.fn()
 	}

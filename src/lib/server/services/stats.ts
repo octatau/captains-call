@@ -6,7 +6,7 @@
  */
 
 import type { CrowdStat } from '$lib/types';
-import { supabaseAdmin } from '$lib/supabaseClient';
+import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 
 // Percentage rounding: one decimal place
 const PERCENTAGE_DECIMALS = 1;

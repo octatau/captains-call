@@ -5,7 +5,7 @@
  */
 
 import type { DBSubmission } from '$lib/types';
-import { supabaseAdmin } from '$lib/supabaseClient';
+import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 import type { ScoreResult } from './scoring';
 
 export interface CreateSubmissionParams {

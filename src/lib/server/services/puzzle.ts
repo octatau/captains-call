@@ -5,7 +5,7 @@
  */
 
 import type { DBPuzzle, Puzzle, ArchivePuzzle } from '$lib/types';
-import { supabaseAdmin } from '$lib/supabaseClient';
+import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 import { seededShuffle, getUserLocalDate } from '$lib/utils';
 
 export interface PuzzleQueryOptions {
