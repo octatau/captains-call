@@ -1,5 +1,5 @@
 /**
- * Centralized theme configuration for Captain's Call
+ * Centralized theme configuration for topick
  * All color classes should reference these theme utilities
  */
 

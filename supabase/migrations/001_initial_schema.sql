@@ -1,4 +1,4 @@
--- Captain's Call Database Schema
+-- topick Database Schema
 -- Initial migration: puzzles and submissions tables with sources support
 -- Schema: public (default Supabase schema)
 
