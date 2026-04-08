@@ -21,12 +21,12 @@ export const submitRequestSchema = z
 		user_id: z.string().uuid({ message: 'Invalid user_id format' }),
 		puzzle_id: z.string().uuid({ message: 'Invalid puzzle_id format' }),
 		drafted_items: z
-			.array(z.string())
+			.array(z.string().max(500, { message: 'Item name too long' }))
 			.length(DRAFT_SIZE, { message: `Must select exactly ${DRAFT_SIZE} items` })
 			.refine((items) => new Set(items).size === items.length, {
 				message: `Must select ${DRAFT_SIZE} unique items`
 			}),
-		captain: z.string().min(1, { message: 'Captain is required' })
+		captain: z.string().min(1, { message: 'Captain is required' }).max(500, { message: 'Captain name too long' })
 	})
 	.refine((data) => data.drafted_items.includes(data.captain), {
 		message: 'Your #1 guess must be one of your selected items',
@@ -47,7 +47,10 @@ export const puzzleQuerySchema = z.object({
 		.int({ message: 'puzzle_number must be an integer' })
 		.positive({ message: 'puzzle_number must be positive' })
 		.optional(),
-	date: z.string().optional(),
+	date: z
+		.string()
+		.regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Date must be in YYYY-MM-DD format' })
+		.optional(),
 	timezone: z.coerce
 		.number()
 		.int({ message: 'timezone must be an integer' })
