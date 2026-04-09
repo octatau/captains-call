@@ -41,4 +41,6 @@
 
 <Header {darkMode} onToggleDarkMode={toggleDarkMode} />
 
-{@render children()}
+<main>
+	{@render children()}
+</main>

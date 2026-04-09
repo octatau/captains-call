@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { Puzzle, Results } from '$lib/types';
 	import { getOrCreateUserId, getTimezoneOffset } from '$lib/utils';
+	import { theme } from '$lib/theme';
 	import DraftInterface from '$lib/components/DraftInterface.svelte';
 	import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
 
@@ -98,22 +99,22 @@
 	/>
 </svelte:head>
 
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
+<div class="min-h-screen {theme.page.bg} transition-colors">
 	<div class="container mx-auto px-4 py-8 max-w-4xl">
 		<!-- Content Area -->
 		{#if loading && !puzzle}
-			<div class="flex justify-center items-center min-h-[400px]">
+			<div class="flex justify-center items-center min-h-[400px]" role="status" aria-label="Loading puzzle">
 				<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pearl-aqua-600"></div>
 			</div>
 		{:else if error}
 			<div
-				class="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-100 px-4 py-3 rounded"
+				class="{theme.error.bgLight} border {theme.error.border} {theme.error.text} px-4 py-3 rounded"
 			>
 				<p class="font-bold">Error</p>
 				<p>{error}</p>
 				<button
 					onclick={loadTodaysPuzzle}
-					class="mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-medium"
+					class="mt-3 px-4 py-2 {theme.error.bg} text-white rounded font-medium hover:bg-red-700"
 				>
 					Try Again
 				</button>

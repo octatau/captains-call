@@ -57,13 +57,14 @@
 				<!-- Dark Mode Toggle -->
 				<button
 					onclick={onToggleDarkMode}
-					class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+					class="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
 					aria-label="Toggle dark mode"
+					aria-pressed={darkMode}
 				>
 					{#if darkMode}
-						<Icon src={Sun} size="20" class="text-yellow-500" />
+						<Icon src={Sun} size="20" class="text-jasmine-500" />
 					{:else}
-						<Icon src={Moon} size="20" class="text-gray-700 dark:text-gray-300" />
+						<Icon src={Moon} size="20" class={theme.neutral.textStrong} />
 					{/if}
 				</button>
 			</div>

@@ -4,6 +4,7 @@
 	import { getOrCreateUserId, formatDate } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { theme } from '$lib/theme';
+	import { MAX_TOTAL_SCORE } from '$lib/config/constants';
 	import { Icon, Check } from 'svelte-hero-icons';
 
 	let loading = $state(true);
@@ -64,7 +65,7 @@
 
 			<!-- Loading State -->
 			{#if loading}
-				<div class="flex justify-center items-center min-h-[400px]">
+				<div class="flex justify-center items-center min-h-[400px]" role="status" aria-label="Loading archive">
 					<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pearl-aqua-600"></div>
 				</div>
 			{:else if error}
@@ -92,7 +93,7 @@
 					{#each archivePuzzles as puzzle}
 						<button
 							onclick={() => handlePuzzleClick(puzzle)}
-							class="w-full text-left p-4 rounded-lg border-2 transition-all hover:scale-[1.02] hover:shadow-lg
+							class="w-full text-left p-4 rounded-lg border-2 transition-shadow hover:shadow-lg focus-visible:ring-2 focus-visible:ring-pearl-aqua-300 focus-visible:ring-offset-2
 								{puzzle.has_submitted
 									? `${theme.success.border} ${theme.success.bgLight}`
 									: `${theme.neutral.border} ${theme.card.bg} ${theme.primary.borderHover}`}"
@@ -128,7 +129,7 @@
 									{#if puzzle.has_submitted && puzzle.total_score !== undefined}
 										<div class="text-center">
 											<div class="text-2xl font-bold {theme.success.text}">
-												{puzzle.total_score}/8
+												{puzzle.total_score}/{MAX_TOTAL_SCORE}
 											</div>
 											<div class="text-xs {theme.neutral.text}">View Results</div>
 										</div>

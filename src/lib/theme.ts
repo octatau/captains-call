@@ -19,7 +19,9 @@ export const theme = {
 		text: 'text-gray-900',
 		bg: 'bg-jasmine-500',
 		bgHover: 'hover:bg-jasmine-600',
-		border: 'border-jasmine-500'
+		border: 'border-jasmine-500',
+		hint: 'text-jasmine-700 dark:text-jasmine-400',
+		hintBg: 'bg-jasmine-50 dark:bg-jasmine-900/20'
 	},
 
 	// Success states (correct picks, drafted items)

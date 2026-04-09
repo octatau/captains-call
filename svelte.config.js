@@ -15,7 +15,7 @@ const config = {
 		csp: {
 			directives: {
 				'default-src': ['self'],
-				'script-src': ['self'],
+				'script-src': ['self', 'sha256-kpoeM6cx+KaN2swcBDijAWxPNxljdbYnOr3enJJkB/o='],
 				'style-src': ['self', 'unsafe-inline'],
 				'connect-src': ['self', 'https://*.supabase.co'],
 				'img-src': ['self', 'data:', 'blob:'],

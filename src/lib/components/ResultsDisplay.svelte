@@ -79,7 +79,7 @@
 
 	<!-- Layer 1: Score Summary -->
 	{#if revealLayer >= 1}
-		<div class="bg-pearl-aqua-600 dark:bg-pearl-aqua-500 text-white rounded-lg p-8 shadow-xl animate-fadeIn mb-6">
+		<div class="bg-pearl-aqua-600 dark:bg-pearl-aqua-500 text-white rounded-lg p-8 shadow-xl animate-fadeInUp mb-6">
 			<div class="text-center">
 				<p class="text-sm uppercase tracking-wide opacity-80 mb-2">Your Score</p>
 				<h2 class="text-6xl font-bold mb-4">{results.submission.total_score}/{MAX_TOTAL_SCORE}</h2>
@@ -105,7 +105,7 @@
 
 	<!-- Layer 2: Your Guesses vs Reality -->
 	{#if revealLayer >= 2}
-		<div class="animate-fadeIn space-y-6">
+		<div class="animate-fadeInUp space-y-6">
 			<!-- Section Header -->
 			<div class="text-center">
 				<h3 class="text-2xl font-bold {theme.neutral.textStrong} mb-2">Your Guesses vs Reality</h3>
@@ -123,8 +123,8 @@
 						{@const youPicked = results.submission.drafted_items.includes(item)}
 						{@const yourTopPick = results.submission.captain === item}
 
-						<div class="flex items-center gap-3 p-3 rounded-lg {youPicked ? 'bg-pearl-aqua-50 dark:bg-pearl-aqua-900/20' : 'bg-gray-50 dark:bg-gray-800'}">
-							<div class="flex items-center justify-center w-10 h-10 rounded-full {youPicked ? 'bg-pearl-aqua-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'} font-bold text-lg">
+						<div class="flex items-center gap-3 p-3 rounded-lg {youPicked ? theme.success.bgLight : theme.neutral.bgLight}">
+							<div class="flex items-center justify-center w-10 h-10 rounded-full {youPicked ? `${theme.success.bg} text-white` : `${theme.disabled.bg} ${theme.disabled.text}`} font-bold text-lg">
 								{rank}
 							</div>
 							<div class="flex-1">
@@ -132,18 +132,18 @@
 							</div>
 							<div class="flex items-center gap-2">
 								{#if youPicked}
-									<div class="flex items-center gap-1 px-3 py-1 bg-pearl-aqua-600 text-white rounded-full text-sm font-medium">
+									<div class="flex items-center gap-1 px-3 py-1 {theme.success.bg} text-white rounded-full text-sm font-medium">
 										<Icon src={Check} mini size="14" />
 										You got this!
 									</div>
 								{:else}
-									<div class="flex items-center gap-1 px-3 py-1 bg-gray-400 dark:bg-gray-600 text-white rounded-full text-sm">
+									<div class="flex items-center gap-1 px-3 py-1 {theme.neutral.bg} dark:bg-gray-600 text-white rounded-full text-sm">
 										<Icon src={XMark} mini size="14" />
 										Missed
 									</div>
 								{/if}
 								{#if yourTopPick}
-									<div class="flex items-center gap-1 px-3 py-1 bg-jasmine-500 text-gray-900 rounded-full text-sm font-bold">
+									<div class="flex items-center gap-1 px-3 py-1 {theme.accent.bg} {theme.accent.text} rounded-full text-sm font-bold">
 										<Icon src={Star} mini size="14" />
 										Your #1
 									</div>
@@ -159,8 +159,8 @@
 				{@const incorrectGuesses = results.submission.drafted_items.filter(
 					(item) => !trueTop5.map(([i]) => i).includes(item)
 				)}
-				<div class="bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 p-6">
-					<h4 class="text-lg font-bold text-red-800 dark:text-red-200 mb-4 flex items-center gap-2">
+				<div class="{theme.error.bgLight} rounded-lg border {theme.error.border} p-6">
+					<h4 class="text-lg font-bold {theme.error.text} mb-4 flex items-center gap-2">
 						<Icon src={XMark} mini size="20" />
 						Items You Picked (But Weren't in Top 5)
 					</h4>
@@ -169,7 +169,7 @@
 							{@const yourTopPick = results.submission.captain === item}
 							{@const actualRank = results.puzzle.true_rankings[item]}
 
-							<div class="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-gray-800">
+							<div class="flex items-center gap-3 p-3 rounded-lg {theme.card.bg}">
 								<div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold">
 									{actualRank}
 								</div>
@@ -178,7 +178,7 @@
 									<p class="text-sm {theme.neutral.text}">Actually ranked #{actualRank}</p>
 								</div>
 								{#if yourTopPick}
-									<div class="flex items-center gap-1 px-3 py-1 bg-jasmine-500 text-gray-900 rounded-full text-sm font-bold">
+									<div class="flex items-center gap-1 px-3 py-1 {theme.accent.bg} {theme.accent.text} rounded-full text-sm font-bold">
 										<Icon src={Star} mini size="14" />
 										Your #1 pick
 									</div>
@@ -193,12 +193,45 @@
 
 	<!-- Layer 3: Crowd Stats and Sources -->
 	{#if revealLayer >= 3}
-		<div class="space-y-6 animate-fadeIn">
+		<div class="space-y-6 animate-fadeInUp">
 			<!-- Crowd Statistics -->
 			<div class="{theme.card.bg} rounded-lg border {theme.card.border} p-6">
 				<h3 class="text-xl font-bold {theme.neutral.textStrong} mb-2">How Everyone Else Guessed</h3>
 				<p class="text-sm {theme.neutral.text} mb-4">See what percentage of players selected each item</p>
-				<div class="overflow-x-auto">
+				<!-- Mobile: stacked cards -->
+				<div class="sm:hidden space-y-3">
+					{#each results.crowd_stats as stat}
+						{@const youPicked = results.submission.drafted_items.includes(stat.item_name)}
+						<div class="p-3 rounded-lg {youPicked ? theme.success.bgLight : theme.neutral.bgLight}">
+							<div class="flex items-center gap-2 mb-2">
+								<span class="text-sm font-bold {theme.neutral.textStrong}">#{stat.rank}</span>
+								<span class="text-sm font-medium {theme.neutral.textStrong} flex-1 min-w-0 truncate">{stat.item_name}</span>
+								{#if youPicked}
+									<span class="text-xs {theme.primary.text} flex-shrink-0">You</span>
+								{/if}
+							</div>
+							<div class="space-y-1.5">
+								<div class="flex items-center gap-2">
+									<span class="text-xs {theme.neutral.text} w-16 flex-shrink-0">Picked</span>
+									<div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2" role="progressbar" aria-valuenow={stat.drafted_percentage} aria-valuemin={0} aria-valuemax={100} aria-label="{stat.item_name} drafted percentage">
+										<div class="bg-pearl-aqua-600 h-2 rounded-full" style="width: {stat.drafted_percentage}%"></div>
+									</div>
+									<span class="text-sm font-medium {theme.neutral.textStrong} w-10 text-right">{stat.drafted_percentage}%</span>
+								</div>
+								<div class="flex items-center gap-2">
+									<span class="text-xs {theme.neutral.text} w-16 flex-shrink-0">Made #1</span>
+									<div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2" role="progressbar" aria-valuenow={stat.captained_percentage} aria-valuemin={0} aria-valuemax={100} aria-label="{stat.item_name} captained percentage">
+										<div class="bg-jasmine-500 h-2 rounded-full" style="width: {stat.captained_percentage}%"></div>
+									</div>
+									<span class="text-sm font-medium {theme.neutral.textStrong} w-10 text-right">{stat.captained_percentage}%</span>
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
+
+				<!-- Desktop: table -->
+				<div class="hidden sm:block overflow-x-auto">
 					<table class="w-full">
 						<thead>
 							<tr class="border-b-2 {theme.card.border}">
@@ -231,7 +264,7 @@
 									</td>
 									<td class="px-4 py-3 text-center">
 										<div class="flex items-center justify-center gap-2">
-											<div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+											<div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2" role="progressbar" aria-valuenow={stat.drafted_percentage} aria-valuemin={0} aria-valuemax={100} aria-label="{stat.item_name} drafted percentage">
 												<div class="bg-pearl-aqua-600 h-2 rounded-full" style="width: {stat.drafted_percentage}%"></div>
 											</div>
 											<span class="text-sm font-medium {theme.neutral.textStrong} w-12 text-right">{stat.drafted_percentage}%</span>
@@ -239,7 +272,7 @@
 									</td>
 									<td class="px-4 py-3 text-center">
 										<div class="flex items-center justify-center gap-2">
-											<div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+											<div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2" role="progressbar" aria-valuenow={stat.captained_percentage} aria-valuemin={0} aria-valuemax={100} aria-label="{stat.item_name} captained percentage">
 												<div class="bg-jasmine-500 h-2 rounded-full" style="width: {stat.captained_percentage}%"></div>
 											</div>
 											<span class="text-sm font-medium {theme.neutral.textStrong} w-12 text-right">{stat.captained_percentage}%</span>
@@ -276,7 +309,7 @@
 			<!-- Share Button -->
 			<button
 				onclick={handleShare}
-				class="w-full py-4 px-6 {theme.primary.bg} {theme.primary.bgHover} text-white font-bold text-lg rounded-lg transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+				class="w-full py-4 px-6 {theme.primary.bg} {theme.primary.bgHover} text-white font-bold text-lg rounded-lg transition-colors shadow-lg hover:shadow-xl focus-visible:ring-2 focus-visible:ring-pearl-aqua-300 focus-visible:ring-offset-2 flex items-center justify-center gap-2"
 			>
 				<Icon src={Share} mini size="20" class="inline" />
 				Share Your Results
@@ -302,19 +335,3 @@
 	/>
 {/if}
 
-<style>
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-			transform: translateY(10px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	.animate-fadeIn {
-		animation: fadeIn 0.3s ease-out;
-	}
-</style>

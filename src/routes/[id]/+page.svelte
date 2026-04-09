@@ -115,7 +115,7 @@
 	<div class="container mx-auto px-4 py-8 max-w-4xl">
 		<!-- Content Area -->
 		{#if loading}
-			<div class="flex justify-center items-center min-h-[400px]">
+			<div class="flex justify-center items-center min-h-[400px]" role="status" aria-label="Loading puzzle">
 				<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pearl-aqua-600"></div>
 			</div>
 		{:else if error}

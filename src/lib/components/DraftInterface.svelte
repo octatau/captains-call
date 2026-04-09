@@ -3,6 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { Icon, Star, XMark, QuestionMarkCircle } from 'svelte-hero-icons';
 	import HowToPlayModal from './HowToPlayModal.svelte';
+	import { theme } from '$lib/theme';
 	import { DRAFT_SIZE, MAX_BASE_SCORE, CAPTAIN_BONUS, MAX_TOTAL_SCORE } from '$lib/config/constants';
 
 	interface Props {
@@ -63,24 +64,24 @@
 	}
 </script>
 
-<div class="fade-in">
+<div class="animate-fadeInUp">
 	<header class="text-center mb-8">
 		<div class="flex justify-center items-center mb-2 relative">
-			<p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Topick #{puzzle.puzzle_number}</p>
+			<p class="text-sm {theme.neutral.text} font-medium">Topick #{puzzle.puzzle_number}</p>
 			<button
 				type="button"
 				onclick={() => showHowToPlay = true}
-				class="absolute right-0 flex items-center gap-1 px-2 py-1 text-xs sm:text-sm text-pearl-aqua-600 dark:text-pearl-aqua-400 hover:bg-pearl-aqua-50 dark:hover:bg-pearl-aqua-900/20 rounded-lg transition-colors"
+				class="absolute right-0 flex items-center gap-1 px-2 py-1 text-xs sm:text-sm {theme.primary.text} hover:bg-pearl-aqua-50 dark:hover:bg-pearl-aqua-900/20 rounded-lg transition-colors"
 			>
 				<Icon src={QuestionMarkCircle} mini size="16" class="sm:w-[18px] sm:h-[18px]" />
 				<span class="hidden sm:inline">How to Play</span>
 			</button>
 		</div>
-		<h1 class="text-2xl sm:text-3xl font-bold mb-4 text-gray-900 dark:text-white px-8 sm:px-0">{puzzle.prompt}</h1>
+		<h1 class="text-2xl sm:text-3xl font-bold mb-4 {theme.neutral.textStrong} px-8 sm:px-0">{puzzle.prompt}</h1>
 	</header>
 
-	<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-		<div class="text-gray-600 dark:text-gray-400 mb-4 space-y-1">
+	<div class="{theme.card.bg} rounded-lg shadow-lg p-6 mb-6">
+		<div class="{theme.neutral.text} mb-4 space-y-1">
 			<p class="font-semibold">Which of these are in the top 5?</p>
 			<p class="text-sm">Then: Which one is #1?</p>
 		</div>
@@ -97,15 +98,15 @@
 					aria-pressed={isDrafted}
 					aria-disabled={isDisabled && !isDrafted}
 					class="relative w-full px-4 py-3 rounded-lg border-2 transition-all text-left {isDrafted
-						? 'border-pearl-aqua-600 dark:border-pearl-aqua-500 bg-pearl-aqua-50 dark:bg-pearl-aqua-900/50'
+						? `${theme.primary.border} ${theme.primary.bgLight}`
 						: isDisabled
-							? 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 opacity-50 cursor-not-allowed'
-							: 'border-gray-300 dark:border-gray-600 hover:border-pearl-aqua-400 dark:hover:border-pearl-aqua-500 bg-white dark:bg-gray-700 cursor-pointer'}"
+							? `${theme.neutral.border} ${theme.card.bg} opacity-50 cursor-not-allowed`
+							: `${theme.neutral.border} ${theme.primary.borderHover} ${theme.card.bg} cursor-pointer`}"
 					onclick={() => !isDrafted && !isDisabled && handleItemClick(item)}
 					onkeydown={(e) => !isDrafted && !isDisabled && handleItemKeydown(e, item)}
 				>
 					<div class="flex items-center justify-between gap-3">
-						<span class="font-medium text-gray-900 dark:text-white">{item}</span>
+						<span class="font-medium {theme.neutral.textStrong}">{item}</span>
 						{#if isDrafted}
 							<div class="flex items-center gap-2">
 								<button
@@ -114,10 +115,10 @@
 										e.stopPropagation();
 										handleToggleCaptain(item);
 									}}
-									class="p-1.5 rounded transition-colors {isCaptain
-										? 'bg-jasmine-500 text-gray-900 hover:bg-jasmine-600'
-										: 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-400 dark:hover:bg-gray-500'}"
-									title={isCaptain ? 'Remove as #1' : 'Make #1'}
+									class="min-w-[44px] min-h-[44px] flex items-center justify-center rounded transition-colors {isCaptain
+										? `${theme.accent.bg} ${theme.accent.text} ${theme.accent.bgHover}`
+										: `${theme.disabled.bg} ${theme.disabled.text} hover:bg-gray-400 dark:hover:bg-gray-500`}"
+									aria-label={isCaptain ? `Remove ${item} as #1` : `Make ${item} #1`}
 								>
 									<Icon src={Star} mini size="16" />
 								</button>
@@ -127,8 +128,8 @@
 										e.stopPropagation();
 										handleRemoveItem(item);
 									}}
-									class="p-1 rounded text-gray-500 dark:text-gray-400 hover:bg-pearl-aqua-100 dark:hover:bg-pearl-aqua-900/30 hover:text-pearl-aqua-600 dark:hover:text-pearl-aqua-400 transition-colors"
-									title="Remove selection"
+									class="min-w-[44px] min-h-[44px] flex items-center justify-center rounded {theme.disabled.text} hover:bg-pearl-aqua-100 dark:hover:bg-pearl-aqua-900/30 hover:text-pearl-aqua-600 dark:hover:text-pearl-aqua-400 transition-colors"
+									aria-label="Remove {item} from selection"
 								>
 									<Icon src={XMark} mini size="18" />
 								</button>
@@ -141,13 +142,13 @@
 
 		<div class="mt-6 space-y-3">
 			{#if draftedItems.length > 0 && !captain}
-				<div class="flex items-center gap-2 text-sm text-jasmine-700 dark:text-jasmine-400 bg-jasmine-50 dark:bg-jasmine-900/20 px-4 py-2 rounded-lg">
+				<div class="flex items-center gap-2 text-sm {theme.accent.hint} {theme.accent.hintBg} px-4 py-2 rounded-lg">
 					<Icon src={Star} mini size="16" />
 					<span>Click the <strong>star</strong> on your top choice to mark it as #1</span>
 				</div>
 			{/if}
 			<div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-				<div class="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
+				<div class="text-sm {theme.neutral.text} text-center sm:text-left">
 					Selected: {draftedItems.length}/{DRAFT_SIZE}
 					{#if captain}
 						| Your #1: {captain}
@@ -157,9 +158,9 @@
 					type="button"
 					onclick={handleSubmit}
 					disabled={!canSubmit}
-					class="w-full sm:w-auto px-6 py-3 font-semibold rounded-lg transition-colors {canSubmit
-						? 'bg-pearl-aqua-600 text-white hover:bg-pearl-aqua-700 dark:bg-pearl-aqua-500 dark:hover:bg-pearl-aqua-600'
-						: 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'}"
+					class="w-full sm:w-auto px-6 py-3 font-semibold rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-pearl-aqua-300 focus-visible:ring-offset-2 {canSubmit
+						? `${theme.primary.bg} text-white ${theme.primary.bgHover}`
+						: `${theme.disabled.bg} ${theme.disabled.text} cursor-not-allowed`}"
 				>
 					Submit Guesses
 				</button>
@@ -167,7 +168,7 @@
 		</div>
 	</div>
 
-	<div class="text-center text-sm text-gray-600 dark:text-gray-400">
+	<div class="text-center text-sm {theme.neutral.text}">
 		<p class="mb-1"><strong>Scoring:</strong> +1 for each correct top {DRAFT_SIZE} guess (max {MAX_BASE_SCORE})</p>
 		<p>+{CAPTAIN_BONUS} bonus if you correctly guess the #1 (max {MAX_TOTAL_SCORE} total)</p>
 	</div>
@@ -177,19 +178,3 @@
 	<HowToPlayModal onClose={() => showHowToPlay = false} />
 {/if}
 
-<style>
-	.fade-in {
-		animation: fadeIn 0.3s ease-out;
-	}
-
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-			transform: translateY(10px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-</style>
