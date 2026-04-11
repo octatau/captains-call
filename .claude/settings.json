@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx supabase --version)",
+      "Bash(npx supabase projects list)",
+      "Bash(npx supabase projects list:*)",
+      "Bash(npx supabase db execute:*)",
+      "Bash(mkdir -p .claude/tmp/puzzles)",
+      "Bash(mkdir -p /home/coder/project/topick/.claude/tmp/puzzles)",
+      "Bash(rm -rf .claude/tmp/puzzles)",
+      "Bash(rm -rf .claude/tmp/puzzles/*)",
+      "Bash(rm -rf /home/coder/project/topick/.claude/tmp/puzzles)",
+      "Bash(rm -rf /home/coder/project/topick/.claude/tmp/puzzles/*)",
+      "WebSearch",
+      "WebFetch"
+    ]
+  }
+}

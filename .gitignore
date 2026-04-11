@@ -27,3 +27,6 @@ vite.config.ts.timestamp-*
 
 # Supabase
 supabase/.temp/
+
+# Claude Code tmp (puzzle generation working files)
+.claude/tmp/
