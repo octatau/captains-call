@@ -59,7 +59,9 @@ Write a polished, professional prompt string for the puzzle. Follow the style of
 
 ### Step 5: Write output
 
-Write a JSON file to the specified output path with this exact structure:
+Write a JSON file to the specified output path with this exact structure.
+
+**Sources rule:** Each entry in the `sources` array must be ONLY a bare URL or a bare "Data as of Month Year" timestamp. Do NOT add descriptive annotations, source labels, parenthetical notes, verification commentary, or any text after the URL (no " - Description", no "(primary source)", no "confirms 6 of 10", etc.). These notes leak AI-generation tells into production data. Keep it clean.
 
 ```json
 {
@@ -79,8 +81,8 @@ Write a JSON file to the specified output path with this exact structure:
     "Item10": 10
   },
   "sources": [
-    "https://example.com/source1 - Description",
-    "https://example.com/source2 - Description",
+    "https://example.com/source1",
+    "https://example.com/source2",
     "Data as of Month Year"
   ],
   "confidence": "high"

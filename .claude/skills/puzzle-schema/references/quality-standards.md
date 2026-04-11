@@ -7,6 +7,7 @@ Every puzzle goes directly into production. These standards are non-negotiable.
 1. **Rankings must come from real, verifiable data.** Never estimate, guess, or use general knowledge to order items.
 2. **Cross-reference at least 2 independent sources** before finalizing a ranking. If sources disagree, use the most authoritative source and note the discrepancy.
 3. **Sources must be real.** Every entry in the `sources` array must be a real URL to an authoritative site or a named publication with enough detail to verify. No fabricated URLs.
+   - **Bare URLs only.** Do not annotate source entries with descriptions, labels, parenthetical notes, or verification commentary (no " - Description", no "(primary source)", no "confirms X of 10"). The sources array is user-visible data — extra commentary reads as AI-generated. Only exception: a single "Data as of Month Year" timestamp entry is allowed.
 4. **Include the time period.** Rankings change over time. Always specify the year or date range the data is from, both in the prompt text and in the sources.
 
 ## Content Quality

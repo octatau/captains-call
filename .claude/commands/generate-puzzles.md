@@ -1,7 +1,7 @@
 ---
 description: Generate production-quality topick puzzles from topic ideas and insert them into Supabase
-argument-hint: <topic1, topic2, ...> [--start-date YYYY-MM-DD]
-allowed-tools: Agent, Bash, Read, Write, Glob
+argument-hint: [<topic1, topic2, ...>] [--start-date YYYY-MM-DD]
+allowed-tools: Agent, Bash, Read, Write, Edit, Glob
 ---
 
 # Generate Puzzles
@@ -11,18 +11,38 @@ Generates production-quality topick puzzles from topic ideas, researches real-wo
 ## Usage
 `/generate-puzzles tallest buildings, fastest animals, largest lakes`
 `/generate-puzzles tallest buildings, fastest animals --start-date 2026-05-01`
+`/generate-puzzles` — interactive mode (see Step 0)
 
-$ARGUMENTS accepts a comma-separated list of topic ideas, with an optional `--start-date YYYY-MM-DD` flag to override the default consecutive date assignment.
+$ARGUMENTS accepts an optional comma-separated list of topic ideas and an optional `--start-date YYYY-MM-DD` flag. When no topics are given, the command enters interactive mode.
 
 ## What happens
 
-### Step 0: Parse arguments
+### Step 0: Parse arguments / interactive intake
 
 Parse `$ARGUMENTS` to extract:
 - **Topics:** Split on commas, trim whitespace. Remove the `--start-date` flag and its value from the topic list if present.
-- **Start date override:** If `--start-date YYYY-MM-DD` is present, extract the date value. Otherwise, leave it unset (default behavior will be used later).
+- **Start date override:** If `--start-date YYYY-MM-DD` is present, extract the date value. Otherwise, leave it unset.
 
-If no topics are provided, ask the user for topic ideas and wait.
+**If topics were provided**, continue to Step 1 with those topics and the parsed `--start-date` (if any).
+
+**If no topics were provided**, enter interactive mode:
+
+1. Check whether `puzzle-ideas.md` exists at the project root (`/home/coder/project/topick/puzzle-ideas.md`).
+
+2. **If `puzzle-ideas.md` exists** (ideas-file mode):
+   - Ask the user: "How many puzzles should I generate from `puzzle-ideas.md`?"
+   - Ask the user: "Start date — use `max_daily_date + 1` (default), or a specific date (YYYY-MM-DD)?"
+   - Read `puzzle-ideas.md` and parse topic titles from lines matching the regex `^\d+\.\s+\*\*(.+?)\*\*` — capture group 1 is the topic title. Preserve file order.
+   - Take the first **N** parsed titles (where N is the user-supplied count) as the topic list. If there are fewer than N ideas in the file, report the shortfall and ask whether to proceed with the available count or abort.
+   - Remember these selected titles verbatim — they will be used in Step 8.5 to prune the file after successful insertion.
+   - If the user chose a specific start date, set `start_date_override` to that value. Otherwise leave it unset.
+
+3. **If `puzzle-ideas.md` does not exist** (prompt mode):
+   - Ask the user: "What topic(s) should I generate puzzles for? (comma-separated)"
+   - Ask the user: "Start date — use `max_daily_date + 1` (default), or a specific date (YYYY-MM-DD)?"
+   - Parse topics and optional start date from the responses.
+
+Wait for the user's answers before proceeding.
 
 ### Step 1: Check Supabase CLI
 
@@ -134,6 +154,16 @@ npx supabase db execute --file /home/coder/project/topick/.claude/tmp/puzzles/in
 ```
 
 Report the result to the user -- success or failure with error details.
+
+### Step 8.5: Prune used ideas from puzzle-ideas.md
+
+Only run this step if ideas-file mode was used in Step 0 **and** the SQL execution in Step 8 succeeded.
+
+For each topic title that was successfully inserted (match the titles remembered from Step 0 against the puzzles actually committed in Step 7 — skip any that were rejected during the review gate), remove its entire line from `/home/coder/project/topick/puzzle-ideas.md`.
+
+Use the Edit tool to delete the matching lines. Match lines by the exact bold title captured in Step 0 (e.g. `**Longest Rivers**`) so numbering or category labels don't cause mismatches. Do **not** renumber the remaining entries — leave the numeric prefixes as-is; they are stable identifiers, not sequential indices.
+
+Report to the user how many entries were removed from `puzzle-ideas.md`.
 
 ### Step 9: Clean up
 
