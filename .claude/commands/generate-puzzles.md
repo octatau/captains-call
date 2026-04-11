@@ -31,18 +31,17 @@ Parse `$ARGUMENTS` to extract:
 
 2. **If `puzzle-ideas.md` exists** (ideas-file mode):
    - Ask the user: "How many puzzles should I generate from `puzzle-ideas.md`?"
-   - Ask the user: "Start date — use `max_daily_date + 1` (default), or a specific date (YYYY-MM-DD)?"
    - Read `puzzle-ideas.md` and parse topic titles from lines matching the regex `^\d+\.\s+\*\*(.+?)\*\*` — capture group 1 is the topic title. Preserve file order.
    - Take the first **N** parsed titles (where N is the user-supplied count) as the topic list. If there are fewer than N ideas in the file, report the shortfall and ask whether to proceed with the available count or abort.
    - Remember these selected titles verbatim — they will be used in Step 8.5 to prune the file after successful insertion.
-   - If the user chose a specific start date, set `start_date_override` to that value. Otherwise leave it unset.
 
 3. **If `puzzle-ideas.md` does not exist** (prompt mode):
    - Ask the user: "What topic(s) should I generate puzzles for? (comma-separated)"
-   - Ask the user: "Start date — use `max_daily_date + 1` (default), or a specific date (YYYY-MM-DD)?"
-   - Parse topics and optional start date from the responses.
+   - Parse topics from the response.
 
 Wait for the user's answers before proceeding.
+
+The start date is **never** asked interactively. It defaults to `max_daily_date + 1` and is only overridden when `--start-date YYYY-MM-DD` was passed explicitly as a CLI argument in `$ARGUMENTS`.
 
 ### Step 1: Check Supabase CLI
 

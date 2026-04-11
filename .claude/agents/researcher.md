@@ -33,6 +33,15 @@ Use WebSearch to find ranked data for the topic. Search for at least 3 different
 - Well-known reference sites (e.g., Wikipedia, Statista, World Bank)
 - Domain-specific authorities (e.g., Box Office Mojo for movies, CompaniesMarketCap for companies)
 
+### Step 1.5: Enforce the recency gate (HARD RULE)
+
+**The authoritative data MUST be from within the last 2 calendar years** (e.g. in 2026, only 2024–2026 data qualifies). This is a strict gate, not a preference.
+
+- Reject any topic whose only authoritative ranking is older than 2 years. Do NOT ship it.
+- "Of all time" retrospective lists (AFI's 100 Villains 2003, Rolling Stone's 100 Greatest Music Videos 2021, etc.) are **not acceptable** unless the ranking itself was re-published within the last 2 years AND the source refreshes it periodically (e.g. Billboard, Forbes annual lists).
+- The `Data as of Month Year` timestamp in the `sources` array must fall within the last 2 years.
+- If the topic as stated maps only to stale sources, try to reframe it once to a naturally-refreshing metric (e.g. "Best Sitcoms" → "Highest-Rated Sitcoms on IMDb 2025", "Greatest Golfers" → "Most PGA Tour Wins All-Time if the list was refreshed recently", "Most Popular Bucket List Items" → drop if no recent survey exists). If no recent, authoritative version exists, write a failure file with reason `stale_data` and stop — do NOT ship it.
+
 ### Step 2: Verify with at least 2 independent sources
 
 Use WebFetch to read at least 2 of the top sources. Cross-reference the rankings. The top 10 items AND their relative order must be consistent across sources.
