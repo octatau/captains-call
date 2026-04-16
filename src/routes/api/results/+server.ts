@@ -44,10 +44,12 @@ export const GET: RequestHandler = async ({ url }) => {
 		// Generate share text
 		const shareText = generateShareText(
 			puzzle.puzzle_number,
+			puzzle.prompt,
 			submission.drafted_items,
 			submission.captain,
 			trueRankings,
-			submission.total_score
+			submission.total_score,
+			url.host
 		);
 
 		// Build results

@@ -167,38 +167,43 @@ describe('seededShuffle', () => {
 
 describe('generateShareText', () => {
 	const trueRankings = { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9, J: 10 };
+	const prompt = 'Longest Rivers';
+	const host = 'topick.app';
 
-	it('includes puzzle number', () => {
-		const result = generateShareText(42, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6);
+	it('includes puzzle number and prompt in header', () => {
+		const result = generateShareText(42, prompt, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6, host);
 		expect(result).toContain('#42');
+		expect(result).toContain(prompt);
 	});
 
 	it('includes total score', () => {
-		const result = generateShareText(1, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6);
+		const result = generateShareText(1, prompt, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6, host);
 		expect(result).toContain(`6/${MAX_TOTAL_SCORE}`);
 	});
 
-	it('shows correct count of top N matches', () => {
-		// All 5 correct
-		const perfect = generateShareText(1, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6);
-		expect(perfect).toContain(`5/${TOP_N}`);
+	it('uses filled star when captain is #1, hollow when missed', () => {
+		const nailed = generateShareText(1, prompt, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6, host);
+		expect(nailed).toContain('⭐');
+		expect(nailed).not.toContain('☆');
 
-		// Only 3 correct
-		const partial = generateShareText(1, ['A', 'B', 'C', 'F', 'G'], 'A', trueRankings, 4);
-		expect(partial).toContain(`3/${TOP_N}`);
+		const missed = generateShareText(1, prompt, ['A', 'B', 'C', 'D', 'E'], 'B', trueRankings, 5, host);
+		expect(missed).toContain('☆');
+		expect(missed).not.toContain('⭐');
 	});
 
-	it('shows correct #1 pick indicator', () => {
-		const correct = generateShareText(1, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6);
-		expect(correct).toContain('Correct');
-
-		const missed = generateShareText(1, ['A', 'B', 'C', 'D', 'E'], 'B', trueRankings, 5);
-		expect(missed).toContain('Missed');
+	it('uses filled dots for top-N hits and hollow dots for misses', () => {
+		const result = generateShareText(1, prompt, ['A', 'B', 'C', 'F', 'G'], 'A', trueRankings, 4, host);
+		// captain A is excluded from dot row; B, C are hits (●), F, G are misses (○)
+		const dotLine = result.split('\n')[1];
+		expect(dotLine).toContain('●');
+		expect(dotLine).toContain('○');
+		expect((dotLine.match(/●/g) || []).length).toBe(2);
+		expect((dotLine.match(/○/g) || []).length).toBe(2);
 	});
 
-	it('includes site name', () => {
-		const result = generateShareText(1, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6);
-		expect(result).toContain('Topickal');
+	it('includes host', () => {
+		const result = generateShareText(1, prompt, ['A', 'B', 'C', 'D', 'E'], 'A', trueRankings, 6, 'example.com');
+		expect(result).toContain('example.com');
 	});
 });
 

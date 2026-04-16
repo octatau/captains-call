@@ -16,7 +16,7 @@ import {
 } from '$lib/server/services';
 import { checkRateLimit, getClientIp, SUBMIT_RATE_LIMIT } from '$lib/server/ratelimit';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, url }) => {
 	try {
 		// Rate limiting - check before any other processing
 		const clientIp = getClientIp(request);
@@ -89,10 +89,12 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Generate share text
 		const shareText = generateShareText(
 			puzzle.puzzle_number,
+			puzzle.prompt,
 			drafted_items,
 			captain,
 			trueRankings,
-			score.totalScore
+			score.totalScore,
+			url.host
 		);
 
 		// Build results

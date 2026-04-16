@@ -141,32 +141,25 @@ export function getUserLocalDate(timezoneOffsetMinutes?: number): string {
  */
 export function generateShareText(
 	puzzleNumber: number,
+	prompt: string,
 	draftedItems: string[],
 	captain: string,
 	trueRankings: Record<string, number>,
-	totalScore: number
+	totalScore: number,
+	host: string
 ): string {
-	// Get true top N in order
-	const trueTopN = Object.entries(trueRankings)
-		.filter(([_, rank]) => rank <= TOP_N)
-		.sort((a, b) => a[1] - b[1])
-		.map(([item, _]) => item);
+	const captainGlyph = trueRankings[captain] === TOP_RANK ? '⭐' : '☆';
 
-	// Count correct predictions
-	const correctCount = trueTopN.filter((item) => draftedItems.includes(item)).length;
+	const pickGlyphs = draftedItems
+		.filter((item) => item !== captain)
+		.map((item) => (trueRankings[item] <= TOP_N ? '●' : '○'))
+		.join(' ');
 
-	// Check #1 prediction
-	const nailedTheOne = trueRankings[captain] === TOP_RANK;
-
-	// Build share text with better formatting and icons
 	const lines = [
-		`🎯 Topick #${puzzleNumber}`,
-		'',
-		`🏆 Score: ${totalScore}/${MAX_TOTAL_SCORE}`,
-		`✓ Top ${TOP_N}: ${correctCount}/${TOP_N}`,
-		`⭐ #1 Pick: ${nailedTheOne ? '✓ Correct!' : '✗ Missed'}`,
-		'',
-		'Play today at Topickal!'
+		`Topick #${puzzleNumber} · ${prompt}`,
+		`${captainGlyph}  ${pickGlyphs}`,
+		`${totalScore}/${MAX_TOTAL_SCORE}`,
+		host
 	];
 
 	return lines.join('\n');
