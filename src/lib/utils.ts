@@ -201,25 +201,17 @@ export function isToday(dateString: string): boolean {
 }
 
 /**
- * Generate an image from a DOM element using html2canvas
- * Returns a Blob that can be downloaded or shared
+ * Generate a PNG Blob from a DOM element using html-to-image.
+ * Uses SVG foreignObject under the hood, so the browser does the actual
+ * layout — avoids html2canvas's flex/table alignment bugs.
  */
 export async function generateImageFromElement(element: HTMLElement): Promise<Blob | null> {
 	try {
-		const html2canvas = (await import('html2canvas')).default;
+		const { toBlob } = await import('html-to-image');
 
-		const canvas = await html2canvas(element, {
-			backgroundColor: null,
-			scale: 2, // Higher quality
-			logging: false,
-			windowWidth: element.scrollWidth,
-			windowHeight: element.scrollHeight
-		});
-
-		return new Promise((resolve) => {
-			canvas.toBlob((blob) => {
-				resolve(blob);
-			}, 'image/png');
+		return await toBlob(element, {
+			pixelRatio: 2,
+			cacheBust: true
 		});
 	} catch (error) {
 		console.error('Failed to generate image:', error);
