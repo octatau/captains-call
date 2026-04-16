@@ -58,32 +58,32 @@
 		</div>
 
 		<!-- Results Grid -->
-		<div style="display: grid; gap: 12px; margin-top: 24px;">
-			{#each trueTop5.slice(0, 5) as [item, rank]}
+		<div style="margin-top: 24px;">
+			{#each trueTop5.slice(0, 5) as [item, rank], i}
 				{@const isDrafted = results.submission.drafted_items.includes(item)}
 				{@const isCaptain = results.submission.captain === item}
 
-				<div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: {isDrafted ? '#edf8f7' : '#f8fafc'}; border-radius: 8px; border: 2px solid {isDrafted ? '#47b8ab' : '#e2e8f0'};">
-					<div style="font-size: 20px; font-weight: 700; color: #64748b; width: 32px; text-align: center;">
+				<div style="display: table; width: 100%; padding: 12px; box-sizing: border-box; background: {isDrafted ? '#edf8f7' : '#f8fafc'}; border-radius: 8px; border: 2px solid {isDrafted ? '#47b8ab' : '#e2e8f0'};{i < 4 ? ' margin-bottom: 12px;' : ''}">
+					<div style="display: table-cell; vertical-align: middle; font-size: 20px; font-weight: 700; color: #64748b; width: 44px; text-align: center; padding-right: 12px;">
 						#{rank}
 					</div>
-					<div style="flex: 1; font-size: 16px; font-weight: 600; color: #0f172a;">
+					<div style="display: table-cell; vertical-align: middle; font-size: 16px; font-weight: 600; color: #0f172a; padding-right: 12px;">
 						{item.length > SHARE_CARD_ITEM_TRUNCATE_LENGTH ? item.slice(0, SHARE_CARD_ITEM_TRUNCATE_LENGTH) + '...' : item}
 					</div>
-					<div style="display: flex; gap: 6px; align-items: center;">
+					<div style="display: table-cell; vertical-align: middle; text-align: right; white-space: nowrap;">
 						{#if isDrafted}
-							<div style="background: #47b8ab; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+							<span style="display: inline-block; vertical-align: middle; background: #47b8ab; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
 								✓
-							</div>
+							</span>
 						{:else}
-							<div style="background: #94a3b8; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+							<span style="display: inline-block; vertical-align: middle; background: #94a3b8; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
 								✗
-							</div>
+							</span>
 						{/if}
 						{#if isCaptain}
-							<div style="background: #edb312; color: #0f172a; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">
+							<span style="display: inline-block; vertical-align: middle; background: #edb312; color: #0f172a; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-left: 6px;">
 								★ #1
-							</div>
+							</span>
 						{/if}
 					</div>
 				</div>
