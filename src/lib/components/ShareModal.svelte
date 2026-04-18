@@ -194,17 +194,17 @@
 		use:focusTrap
 		class="{theme.card.bg} rounded-lg shadow-2xl max-w-md w-full relative animate-scaleIn my-8 max-h-[90vh] overflow-y-auto"
 	>
+		<div class="p-4 sm:p-6 relative">
 		<!-- Close Button -->
 		<button
 			type="button"
 			onclick={onClose}
-			class="sticky top-2 right-2 float-right min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10 {theme.card.bg}"
+			class="absolute top-2 right-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10"
 			aria-label="Close"
 		>
 			<Icon src={XMark} size="24" class="text-gray-500 dark:text-gray-400" />
 		</button>
 
-		<div class="p-4 sm:p-6">
 		<!-- Header -->
 		<div class="mb-4 sm:mb-6">
 			<h2 id="share-modal-title" class="text-xl sm:text-2xl font-bold {theme.neutral.textStrong} mb-2">Share Your Results</h2>
@@ -372,8 +372,8 @@
 
 <!-- Toast Notification -->
 {#if showToast}
-	<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[60] animate-slideUp">
-		<div class="bg-pearl-aqua-600 text-white px-6 py-4 rounded-lg shadow-2xl max-w-md">
+	<div class="fixed bottom-4 left-4 right-4 z-[60] flex justify-center animate-slideUp">
+		<div class="bg-pearl-aqua-600 text-white px-6 py-4 rounded-lg shadow-2xl max-w-md w-full sm:w-auto">
 			<p class="font-medium text-center">{toastMessage}</p>
 		</div>
 	</div>
