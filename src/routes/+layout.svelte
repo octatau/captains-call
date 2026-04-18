@@ -45,8 +45,12 @@
 	<meta name="twitter:image" content="https://www.playtopick.com/og-image.png" />
 </svelte:head>
 
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-pearl-aqua-600 focus:text-white focus:rounded-lg focus:font-semibold">
+	Skip to content
+</a>
+
 <Header {darkMode} onToggleDarkMode={toggleDarkMode} />
 
-<main>
+<main id="main-content">
 	{@render children()}
 </main>
