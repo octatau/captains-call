@@ -286,20 +286,20 @@
 			</div>
 
 			<!-- Sources -->
-			<div class="{theme.info.bg} border {theme.info.border} rounded-lg p-4">
+			<div class="{theme.info.bg} border {theme.info.border} rounded-lg p-4 overflow-hidden">
 				<h4 class="text-sm font-semibold {theme.info.text} mb-2 flex items-center gap-2">
 					<Icon src={BookOpen} mini size="16" class="inline" />
 					Data Sources:
 				</h4>
-				<ul class="space-y-1">
+				<ul class="space-y-1 min-w-0">
 					{#each results.sources as source}
-						<li class="text-sm {theme.info.linkText}">
+						<li class="text-sm {theme.info.linkText} min-w-0">
 							{#if source.startsWith('http')}
-								<a href={source} target="_blank" rel="noopener noreferrer" class="underline hover:text-amber-600">
+								<a href={source} target="_blank" rel="noopener noreferrer" class="underline hover:text-amber-600 break-all">
 									{source}
 								</a>
 							{:else}
-								{source}
+								<span class="break-all">{source}</span>
 							{/if}
 						</li>
 					{/each}
