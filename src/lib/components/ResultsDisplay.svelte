@@ -69,7 +69,7 @@
 	}
 </script>
 
-<div class="space-y-6">
+<div class="space-y-6" aria-live="polite">
 	<!-- Header -->
 	<div class="text-center mb-6">
 		<p class="text-sm {theme.neutral.text} mb-2">Topick #{puzzle.puzzle_number}</p>
@@ -124,9 +124,10 @@
 						{@const yourTopPick = results.submission.captain === item}
 
 						<div class="flex items-center gap-3 p-3 rounded-lg {youPicked ? theme.success.bgLight : theme.neutral.bgLight}">
-							<div class="flex items-center justify-center w-10 h-10 rounded-full {youPicked ? `${theme.success.bg} text-white` : `${theme.disabled.bg} ${theme.disabled.text}`} font-bold text-lg">
+							<div class="flex items-center justify-center w-10 h-10 rounded-full {youPicked ? `${theme.success.bg} text-white` : `${theme.disabled.bg} ${theme.disabled.text}`} font-bold text-lg" aria-hidden="true">
 								{rank}
 							</div>
+							<span class="sr-only">Rank {rank}{youPicked ? ' - you picked this correctly' : ' - you missed this'}</span>
 							<div class="flex-1">
 								<p class="font-semibold {theme.neutral.textStrong}">{item}</p>
 							</div>
@@ -296,7 +297,7 @@
 						<li class="text-sm {theme.info.linkText} min-w-0">
 							{#if source.startsWith('http')}
 								<a href={source} target="_blank" rel="noopener noreferrer" class="underline hover:text-amber-600 break-all">
-									{source}
+									{source}<span class="sr-only"> (opens in new tab)</span>
 								</a>
 							{:else}
 								<span class="break-all">{source}</span>
