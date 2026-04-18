@@ -22,7 +22,7 @@
 			<a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
 				<Logo size={32} />
 				<div class="flex flex-col">
-					<h1 class="text-xl font-bold {theme.neutral.textStrong} leading-tight">Topick</h1>
+					<span class="text-xl font-bold {theme.neutral.textStrong} leading-tight">Topick</span>
 					<span class="hidden sm:block text-xs {theme.neutral.text} font-medium leading-tight">Guess the Rankings</span>
 				</div>
 			</a>
