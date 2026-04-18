@@ -123,9 +123,11 @@
 		{#if loading && !puzzle}
 			<div class="flex justify-center items-center min-h-[400px]" role="status" aria-label="Loading puzzle">
 				<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pearl-aqua-600"></div>
+				<span class="sr-only">Loading puzzle...</span>
 			</div>
 		{:else if error}
 			<div
+				role="alert"
 				class="{theme.error.bgLight} border {theme.error.border} {theme.error.text} px-4 py-3 rounded"
 			>
 				<p class="font-bold">Error</p>

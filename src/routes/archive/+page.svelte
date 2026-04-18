@@ -71,9 +71,11 @@
 			{#if loading}
 				<div class="flex justify-center items-center min-h-[400px]" role="status" aria-label="Loading archive">
 					<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pearl-aqua-600"></div>
+					<span class="sr-only">Loading archive...</span>
 				</div>
 			{:else if error}
 				<div
+					role="alert"
 					class="{theme.error.bgLight} border {theme.error.border} {theme.error.text} px-4 py-3 rounded"
 				>
 					<p class="font-bold">Error</p>
@@ -97,6 +99,7 @@
 					{#each archivePuzzles as puzzle}
 						<button
 							onclick={() => handlePuzzleClick(puzzle)}
+							aria-label="Puzzle #{puzzle.puzzle_number}: {puzzle.prompt}{puzzle.has_submitted && puzzle.total_score !== undefined ? ` - Completed, score ${puzzle.total_score}/${MAX_TOTAL_SCORE}` : ' - Not played yet'}"
 							class="w-full text-left p-4 rounded-lg border-2 transition-shadow hover:shadow-lg focus-visible:ring-2 focus-visible:ring-pearl-aqua-300 focus-visible:ring-offset-2
 								{puzzle.has_submitted
 									? `${theme.success.border} ${theme.success.bgLight}`
