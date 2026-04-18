@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+	<title>Topick Logo</title>
+
+	<!-- Background Circle -->
+	<circle cx="64" cy="64" r="60" fill="#47b8ab"/>
+
+	<!-- Podium Base - Three Levels -->
+	<!-- 3rd Place (Left, Shortest) -->
+	<rect x="20" y="70" width="24" height="35" rx="2" fill="#91d4cc"/>
+	<text x="32" y="92" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="system-ui, sans-serif">3</text>
+
+	<!-- 1st Place (Center, Tallest) -->
+	<rect x="52" y="40" width="24" height="65" rx="2" fill="#2b6e66"/>
+	<text x="64" y="78" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="system-ui, sans-serif">1</text>
+
+	<!-- 2nd Place (Right, Medium) -->
+	<rect x="84" y="58" width="24" height="47" rx="2" fill="#6cc6bb"/>
+	<text x="96" y="86" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="system-ui, sans-serif">2</text>
+
+	<!-- Star on #1 -->
+	<g transform="translate(64, 25)">
+		<!-- Star shape -->
+		<path
+			d="M 0 -10 L 3 -3 L 10 -1.5 L 5 4 L 7 11 L 0 7.5 L -7 11 L -5 4 L -10 -1.5 L -3 -3 Z"
+			fill="#edb312"
+			stroke="#0f172a"
+			stroke-width="1"
+		/>
+	</g>
+
+	<!-- Base Line -->
+	<line x1="15" y1="108" x2="113" y2="108" stroke="#2b6e66" stroke-width="3" stroke-linecap="round"/>
+</svg>
