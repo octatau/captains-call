@@ -83,12 +83,12 @@
 			<div class="text-center">
 				<p class="text-sm uppercase tracking-wide opacity-80 mb-2">Your Score</p>
 				<h2 class="text-6xl font-bold mb-4">{results.submission.total_score}/{MAX_TOTAL_SCORE}</h2>
-				<div class="flex items-center justify-center gap-6 text-lg">
+				<div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-lg">
 					<div class="flex items-center gap-2">
 						<Icon src={Check} mini size="20" />
 						<span>{results.submission.base_score}/{TOP_N} in top {TOP_N}</span>
 					</div>
-					<div class="opacity-50">•</div>
+					<div class="hidden sm:block opacity-50">•</div>
 					<div class="flex items-center gap-2">
 						{#if captainCorrect}
 							<Icon src={Star} mini size="20" />
@@ -130,7 +130,7 @@
 							<div class="flex-1">
 								<p class="font-semibold {theme.neutral.textStrong}">{item}</p>
 							</div>
-							<div class="flex items-center gap-2">
+							<div class="flex flex-wrap items-center gap-2">
 								{#if youPicked}
 									<div class="flex items-center gap-1 px-3 py-1 {theme.success.bg} text-white rounded-full text-sm font-medium">
 										<Icon src={Check} mini size="14" />
