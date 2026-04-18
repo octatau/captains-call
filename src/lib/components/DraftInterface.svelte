@@ -65,7 +65,7 @@
 </script>
 
 <div class="animate-fadeInUp">
-	<header class="text-center mb-8">
+	<div class="text-center mb-8">
 		<div class="flex justify-center items-center mb-2 relative">
 			<p class="text-sm {theme.neutral.text} font-medium">Topick #{puzzle.puzzle_number}</p>
 			<button
@@ -78,7 +78,7 @@
 			</button>
 		</div>
 		<h1 class="text-2xl sm:text-3xl font-bold mb-4 {theme.neutral.textStrong} px-8 sm:px-0">{puzzle.prompt}</h1>
-	</header>
+	</div>
 
 	<div class="{theme.card.bg} rounded-lg shadow-lg p-6 mb-6">
 		<div class="{theme.neutral.text} mb-4 space-y-1">
@@ -97,7 +97,8 @@
 					tabindex={isDisabled && !isDrafted ? -1 : 0}
 					aria-pressed={isDrafted}
 					aria-disabled={isDisabled && !isDrafted}
-					class="relative w-full px-4 py-3 rounded-lg border-2 transition-all text-left {isDrafted
+					aria-label={isDrafted && isCaptain ? `${item} - selected, marked as #1` : isDrafted ? `${item} - selected` : isDisabled ? `${item} - unavailable, selection full` : `${item} - click to select`}
+					class="relative w-full px-4 py-3 rounded-lg border-2 transition-all text-left focus-visible:ring-2 focus-visible:ring-pearl-aqua-300 focus-visible:ring-offset-2 {isDrafted
 						? `${theme.primary.border} ${theme.primary.bgLight}`
 						: isDisabled
 							? `${theme.neutral.border} ${theme.card.bg} opacity-50 cursor-not-allowed`
@@ -148,7 +149,7 @@
 				</div>
 			{/if}
 			<div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-				<div class="text-sm {theme.neutral.text} text-center sm:text-left">
+				<div class="text-sm {theme.neutral.text} text-center sm:text-left" aria-live="polite" aria-atomic="true">
 					Selected: {draftedItems.length}/{DRAFT_SIZE}
 					{#if captain}
 						| Your #1: {captain}
