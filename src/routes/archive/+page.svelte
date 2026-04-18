@@ -48,8 +48,12 @@
 </script>
 
 <svelte:head>
-	<title>Archive - Topick</title>
-	<meta name="description" content="View past Topick puzzles" />
+	<title>Puzzle Archive - Topick Daily Ranking Game</title>
+	<meta name="description" content="Browse all past Topick puzzles. Play any puzzle you missed — guess the top 5 rankings from real-world data on movies, sports, music, and more." />
+	<link rel="canonical" href="https://www.playtopick.com/archive" />
+	<meta property="og:title" content="Puzzle Archive - Topick" />
+	<meta property="og:description" content="Browse all past Topick puzzles. Play any puzzle you missed." />
+	<meta property="og:url" content="https://www.playtopick.com/archive" />
 </svelte:head>
 
 <div class="min-h-screen {theme.page.bg} transition-colors">

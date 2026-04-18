@@ -92,11 +92,29 @@
 </script>
 
 <svelte:head>
-	<title>Topick - Daily Ranking Game</title>
+	<title>Topick - Daily Ranking Game | Guess the Top 5</title>
 	<meta
 		name="description"
-		content="Guess the top 5 rankings from real-world data. Can you guess the #1?"
+		content="Play Topick, the free daily ranking game. Guess the top 5 from real-world data — movies, sports, music, and more. Can you pick #1? A new puzzle every day."
 	/>
+	<link rel="canonical" href="https://www.playtopick.com" />
+	<meta property="og:title" content="Topick - Daily Ranking Game" />
+	<meta property="og:description" content="Guess the top 5 from real-world data. Can you pick #1? A new puzzle every day." />
+	<meta property="og:url" content="https://www.playtopick.com" />
+	<meta name="twitter:title" content="Topick - Daily Ranking Game" />
+	<meta name="twitter:description" content="Guess the top 5 from real-world data. Can you pick #1? A new puzzle every day." />
+	{@html `<script type="application/ld+json">${JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "WebApplication",
+		"name": "Topick",
+		"url": "https://www.playtopick.com",
+		"description": "A free daily ranking game. Guess the top 5 from real-world data — movies, sports, music, and more.",
+		"applicationCategory": "GameApplication",
+		"operatingSystem": "Any",
+		"offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+		"author": { "@type": "Organization", "name": "Topick" },
+		"image": "https://www.playtopick.com/og-image.png"
+	})}</script>`}
 </svelte:head>
 
 <div class="min-h-screen {theme.page.bg} transition-colors">

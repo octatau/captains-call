@@ -107,8 +107,14 @@
 </script>
 
 <svelte:head>
-	<title>Puzzle #{puzzleId} - Topick</title>
-	<meta name="description" content="Topick puzzle #{puzzleId}" />
+	<title>Puzzle #{puzzleId} - Topick Daily Ranking Game</title>
+	<meta name="description" content={puzzle?.prompt ? `Topick #${puzzleId}: ${puzzle.prompt} — Can you rank the top 5?` : `Play Topick puzzle #${puzzleId}. Guess the top 5 rankings from real-world data.`} />
+	<link rel="canonical" href={`https://www.playtopick.com/${puzzleId}`} />
+	<meta property="og:title" content={`Topick #${puzzleId} - Daily Ranking Game`} />
+	<meta property="og:description" content={puzzle?.prompt ? `${puzzle.prompt} — Can you rank the top 5?` : `Guess the top 5 rankings from real-world data.`} />
+	<meta property="og:url" content={`https://www.playtopick.com/${puzzleId}`} />
+	<meta name="twitter:title" content={`Topick #${puzzleId} - Daily Ranking Game`} />
+	<meta name="twitter:description" content={puzzle?.prompt ? `${puzzle.prompt} — Can you rank the top 5?` : `Guess the top 5 rankings from real-world data.`} />
 </svelte:head>
 
 <div class="min-h-screen {theme.page.bg} transition-colors">
