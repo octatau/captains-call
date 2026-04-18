@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
 	import Header from '$lib/components/Header.svelte';
 
@@ -35,8 +34,15 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
 	<title>Topick</title>
+	<!-- Default OG tags (overridden per-page) -->
+	<meta property="og:site_name" content="Topick" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="https://www.playtopick.com/og-image.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:image" content="https://www.playtopick.com/og-image.png" />
 </svelte:head>
 
 <Header {darkMode} onToggleDarkMode={toggleDarkMode} />
