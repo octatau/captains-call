@@ -26,8 +26,9 @@
 	function handleItemClick(item: string) {
 		const isDrafted = draftedItems.includes(item);
 
-		if (!isDrafted && draftedItems.length < DRAFT_SIZE) {
-			// Draft the item
+		if (isDrafted) {
+			handleRemoveItem(item);
+		} else if (draftedItems.length < DRAFT_SIZE) {
 			draftedItems = [...draftedItems, item];
 		}
 	}
@@ -97,14 +98,14 @@
 					tabindex={isDisabled && !isDrafted ? -1 : 0}
 					aria-pressed={isDrafted}
 					aria-disabled={isDisabled && !isDrafted}
-					aria-label={isDrafted && isCaptain ? `${item} - selected, marked as #1` : isDrafted ? `${item} - selected` : isDisabled ? `${item} - unavailable, selection full` : `${item} - click to select`}
+					aria-label={isDrafted && isCaptain ? `${item} - selected, marked as #1, click to deselect` : isDrafted ? `${item} - selected, click to deselect` : isDisabled ? `${item} - unavailable, selection full` : `${item} - click to select`}
 					class="relative w-full px-4 py-3 rounded-lg border-2 transition-all text-left focus-visible:ring-2 focus-visible:ring-pearl-aqua-300 focus-visible:ring-offset-2 {isDrafted
-						? `${theme.primary.border} ${theme.primary.bgLight}`
+						? `${theme.primary.border} ${theme.primary.bgLight} cursor-pointer`
 						: isDisabled
 							? `${theme.neutral.border} ${theme.card.bg} opacity-50 cursor-not-allowed`
 							: `${theme.neutral.border} ${theme.primary.borderHover} ${theme.card.bg} cursor-pointer`}"
-					onclick={() => !isDrafted && !isDisabled && handleItemClick(item)}
-					onkeydown={(e) => !isDrafted && !isDisabled && handleItemKeydown(e, item)}
+					onclick={() => !(isDisabled && !isDrafted) && handleItemClick(item)}
+					onkeydown={(e) => !(isDisabled && !isDrafted) && handleItemKeydown(e, item)}
 				>
 					<div class="flex items-center justify-between gap-3">
 						<span class="font-medium {theme.neutral.textStrong}">{item}</span>
